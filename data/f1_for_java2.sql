@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 25-03-2025 a las 14:40:35
+-- Tiempo de generación: 26-03-2025 a las 09:29:54
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -174,19 +174,35 @@ CREATE TABLE `resultado` (
 
 INSERT INTO `resultado` (`pos`, `CodPil`, `CodGP`) VALUES
 (1, 1, 1),
+(2, 1, 2),
 (9, 2, 1),
+(1, 2, 2),
 (4, 3, 1),
+(6, 3, 2),
 (3, 4, 1),
+(3, 4, 2),
 (2, 5, 1),
+(4, 5, 2),
+(12, 6, 2),
 (5, 7, 1),
+(7, 7, 2),
+(10, 8, 2),
 (6, 9, 1),
+(9, 9, 2),
+(14, 11, 2),
 (7, 12, 1),
+(15, 12, 2),
 (8, 13, 1),
 (10, 14, 1),
+(13, 15, 2),
 (11, 16, 1),
 (12, 17, 1),
+(16, 17, 2),
+(11, 18, 2),
 (13, 19, 1),
-(14, 20, 1);
+(5, 19, 2),
+(14, 20, 1),
+(8, 20, 2);
 
 --
 -- Índices para tablas volcadas
