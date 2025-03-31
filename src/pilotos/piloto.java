@@ -45,6 +45,9 @@ public class piloto {
     public void setEquipo(equipos.equipo equipo) {
         this.equipo = equipo;
     }
-
+    @Override
+    public String toString() {
+        return "piloto: " + namepiloto + " "+ surnamepiloto + "\nfecha de nacimiento: " + fecnac + "\nequipo: " + equipo.getName_equipo() + "\ncod piloto: " + cod_piloto;
+    }
     
 }
