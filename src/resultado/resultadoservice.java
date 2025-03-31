@@ -47,19 +47,24 @@ public class resultadoservice implements CRUDSERVICE<resultado>{
        ResultSet rs = stmt.executeQuery("Select * from resultado where CodPil = "+codPil+" && CodGP ="+codGP);
        GPservice gs = new GPservice(conn);
        pilotosService ps = new pilotosService(conn);
+       resultado res = null;
        while (rs.next()) {
             int codgp = rs.getInt("CodGP");
             int codpil = rs.getInt("CodPil");
             int pos = rs.getInt("pos");
             GP gp = gs.requestById(codgp);
             piloto pil = ps.requestById(codpil);
-        
+            res = new resultado(pil,pos,gp);
        }
+       return res;
+
+       
     }
     @Override
     public void create(resultado model) throws SQLException {
         Statement stmt = conn.createStatement();
         stmt.executeQuery("INSERT INTO resultado(CodGP,CodPil,pos) VALUES ("+model.getGP().getCod_gp()+","+model.getPiloto().getCod_piloto()+","+model.getPos()+");");
+        stmt.close();
 
     }
     @Override
@@ -75,8 +80,11 @@ public class resultadoservice implements CRUDSERVICE<resultado>{
     }
     @Override
     public boolean delete(long id) throws SQLException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+        resultado res = requestById(id);
+        Statement stmt = conn.createStatement();
+        stmt.executeQuery("DELETE FROM resultado WHERE CodGP = "+res.getGP().getCod_gp()+" && CodPil = "+res.getPiloto().getCod_piloto());
+        stmt.close();
+        return true;
     }
     
 }
