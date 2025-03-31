@@ -5,12 +5,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.sql.ResultSet;
 import equipos.equipo;
 import equipos.equiposervice;
 
 public class pilotosService implements CRUD.CRUDSERVICE<piloto>{
     Connection con;
+    HashMap<equipo, ArrayList<piloto>> pilporeq = new HashMap<equipo, ArrayList<piloto>>();
     public pilotosService(Connection con) {
         this.con = con;
     }
@@ -19,7 +21,7 @@ public class pilotosService implements CRUD.CRUDSERVICE<piloto>{
         Statement stmt = null;  
         ResultSet rs = null;
         stmt = con.createStatement();
-        rs = stmt.executeQuery("SELECT * FROM pilotos");
+        rs = stmt.executeQuery("SELECT CodPil,NomPil,Ape1Pil,FechaNacimiento,CodEq,DATEDIFF(CURRENT_DATE(),FechaNacimiento)/365 AS EDAD FROM pilotos");
         ArrayList<piloto> aux = new ArrayList<piloto>();
         equiposervice equi = new equiposervice(con);
         while (rs.next()) {
@@ -28,20 +30,54 @@ public class pilotosService implements CRUD.CRUDSERVICE<piloto>{
             String surnamepil = rs.getString("Ape1Pil");
             Date date = rs.getDate("FechaNacimiento");
             int codequipo = rs.getInt("CodEq");
+            int edad = rs.getInt("EDAD");
             equipo equipopil = equi.requestById(codequipo);
-            piloto pil = new piloto(codpil, namepil,surnamepil, date, equipopil);
+            piloto pil = new piloto(codpil, namepil,surnamepil, date, equipopil,edad);
             aux.add(pil);
         }
         stmt.close();
         rs.close();
         return aux;
     }
+    public HashMap<equipo, ArrayList<piloto>> requestAllByEquipo() throws SQLException {
+        Statement stmt = null;  
+        ResultSet rs = null;
+        stmt = con.createStatement();
+        rs = stmt.executeQuery("SELECT CodPil,NomPil,Ape1Pil,FechaNacimiento,CodEq,DATEDIFF(CURRENT_DATE(),FechaNacimiento)/365 AS EDAD FROM pilotos");
+        equiposervice equi = new equiposervice(con);
+        while (rs.next()) {
+            int codpil = rs.getInt("CodPil");
+            String namepil = rs.getString("NomPil");
+            String surnamepil = rs.getString("Ape1Pil");
+            Date date = rs.getDate("FechaNacimiento");
+            int codequipo = rs.getInt("CodEq");
+            int edad = rs.getInt("EDAD");
+            equipo equipopil = equi.requestById(codequipo);
+            piloto pil = new piloto(codpil, namepil,surnamepil, date, equipopil,edad);
+            boolean encontrado = false;
+            for (equipo e : this.pilporeq.keySet()) {
+                if (e.getCod_equipo() == equipopil.getCod_equipo()) {
+                    this.pilporeq.get(e).add(pil);
+                    encontrado = true;
+                }
+            }
+            if (!encontrado) {
+                ArrayList<piloto> lista = new ArrayList<piloto>();
+                lista.add(pil);
+                this.pilporeq.put(equipopil, lista);
+            }
+            
+        }
+        stmt.close();
+        rs.close();
+        return this.pilporeq;
+    }
     @Override
     public piloto requestById(long id) throws SQLException {
         Statement stmt = null;
         ResultSet rs = null;
         stmt = con.createStatement();
-        rs = stmt.executeQuery("SELECT * FROM pilotos WHERE CodPil = " + id);
+        rs = stmt.executeQuery("SELECT  CodPil,NomPil,Ape1Pil,FechaNacimiento,CodEq,DATEDIFF(CURRENT_DATE(),FechaNacimiento)/365 AS EDAD FROM pilotos WHERE CodPil = " + id);
         piloto aux = null;
         equiposervice equi = new equiposervice(con);
         if (rs.next()) {
@@ -50,8 +86,9 @@ public class pilotosService implements CRUD.CRUDSERVICE<piloto>{
             String surnamepil = rs.getString("Ape1Pil");
             Date date = rs.getDate("FechaNacimiento");
             int codequipo = rs.getInt("CodEq");
+             int edad = rs.getInt("EDAD");
             equipo equipopil = equi.requestById(codequipo);
-            aux = new piloto(codpil, namepil,surnamepil, date, equipopil);
+            aux = new piloto(codpil, namepil,surnamepil, date, equipopil,edad);
         }
         stmt.close();
         rs.close();
@@ -83,6 +120,7 @@ public class pilotosService implements CRUD.CRUDSERVICE<piloto>{
         stmt.close();
         return result;
     }
+    
 
 
 }

@@ -10,14 +10,17 @@ public class piloto {
     String namepiloto;
     String surnamepiloto;
     Date fecnac;
+    int  edad;
     equipo equipo;
-    public piloto(int cod_piloto, String namepiloto, String surnamepiloto,Date fecnac,equipos.equipo equipo) {
+    public piloto(int cod_piloto, String namepiloto, String surnamepiloto,Date fecnac,equipos.equipo equipo, int edad) {
         this.cod_piloto = cod_piloto;
         this.namepiloto = namepiloto;
         this.surnamepiloto = surnamepiloto;
         this.fecnac = fecnac;
         this.equipo = equipo;
+        this.edad = edad;
     }
+
     public int getCod_piloto() {
         return cod_piloto;
     }
@@ -47,7 +50,7 @@ public class piloto {
     }
     @Override
     public String toString() {
-        return "piloto: " + namepiloto + " "+ surnamepiloto + "\nfecha de nacimiento: " + fecnac + "\nequipo: " + equipo.getName_equipo() + "\ncod piloto: " + cod_piloto;
+        return "piloto: " + namepiloto + " "+ surnamepiloto + "\nfecha de nacimiento: " + fecnac + "\nequipo: " + equipo.getName_equipo() + "\ncod piloto: " + cod_piloto+"\nedad: " + edad;
     }
     
 }
