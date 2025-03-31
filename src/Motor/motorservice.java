@@ -75,4 +75,5 @@ public class motorservice implements CRUD.CRUDSERVICE<motor> {
         stmt.close();
         return result > 0;
     }
+
 }

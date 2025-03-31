@@ -7,10 +7,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
-import javax.naming.spi.DirStateFactory.Result;
 
 public class GPservice  implements CRUD.CRUDSERVICE<GP>{
     Connection conn;
+    public GPservice(Connection conn){
+        this.conn = conn;
+    }
     @Override
     public ArrayList<GP> requestAll() throws SQLException {
         Statement stmt = null;

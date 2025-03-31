@@ -81,4 +81,6 @@ public class equiposervice  implements CRUD.CRUDSERVICE<equipo>{
         return result;
     }
     
+    
+    
 }

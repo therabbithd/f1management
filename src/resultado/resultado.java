@@ -5,6 +5,7 @@ public class resultado {
     piloto piloto;
     int pos;
     GP GP;
+    int cod;
     public resultado(pilotos.piloto piloto, int pos, GP GP) {
         this.piloto = piloto;
         this.pos = pos;
