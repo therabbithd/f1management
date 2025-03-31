@@ -86,5 +86,21 @@ public class resultadoservice implements CRUDSERVICE<resultado>{
         stmt.close();
         return true;
     }
-    
+    public ArrayList<resultado> requestByGP(GP gp) throws SQLException {
+        Statement stmt = null;
+        ResultSet rs = null;
+        stmt = conn.createStatement();
+        ArrayList<resultado> aux = new ArrayList<resultado>();
+        rs = stmt.executeQuery("SELECT * FROM resultado WHERE CodGP = " + gp.getCod_gp());
+        pilotosService ps = new pilotosService(conn);
+        while (rs.next()) {
+            int codgp = rs.getInt("CodGP");
+            int codpil = rs.getInt("CodPil");
+            int pos = rs.getInt("pos");
+            piloto pil = ps.requestById(codpil);
+            resultado res = new resultado(pil,pos,gp);
+            aux.add(res);
+        }
+        return aux;
+    }
 }

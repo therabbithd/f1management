@@ -29,5 +29,8 @@ public class resultado {
     public void setGP(GP GP) {
         this.GP = GP;
     }
-
+    @Override
+    public String toString() {
+        return ""+pos+".- "+piloto.getNamepiloto()+" "+piloto.getSurnamepiloto()+"\n"+GP.getName_gp();
+    }
 }

@@ -3,13 +3,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import equipos.*;
 import Connection.connectionpool;
+import GP.GP;
+import GP.GPservice;
 import pilotos.piloto;
 import pilotos.pilotosService;
 public class App {
     public static void menu(connectionpool connpool) {
         try {
             Connection conn = connpool.getConnection();
-            System.out.println("1.Listar pilotos\n2.Listar pilotos por equipo\n3.Listar pilotos por GP\n4.Listar resultados por piloto\n5.Listar resultados por GP\n6.Salir");
+            System.out.println("1.Listar pilotos\n2.Listar pilotos por equipo\n3.Listar GPs\n4.Listar resultados por piloto\n5.Listar resultados por GP\n6.Salir");
             int op = Integer.parseInt(System.console().readLine());
             switch (op) {
                 case 1:
@@ -29,10 +31,15 @@ public class App {
                             System.out.println(piloto.toString()+"\n");
                         }
                     }
-                    break;
+                    menu(connpool);
                 case 3:
-                    // Implementar listar pilotos por GP
-                    break;
+                    ArrayList<GP> listagp = new ArrayList<GP>();
+                    GPservice gps = new GPservice(conn);
+                    listagp = gps.requestAll();
+                    for (GP gp : listagp) {
+                        System.out.println(gp);
+                    }
+                    menu(connpool);
                 case 4:
                     // Implementar listar resultados por piloto
                     break;
