@@ -13,7 +13,7 @@ public class App {
     public static void menu(connectionpool connpool) {
         try {
             Connection conn = connpool.getConnection();
-            System.out.println("1.Listar pilotos\n2.Listar pilotos por equipo\n3.Listar GPs\n4.Listar resultados por piloto\n5.Listar resultados por GP\n6.Salir");
+            System.out.println("1.Listar pilotos\n2.Listar pilotos por equipo\n3.Listar GPs\n4.Listar resultados de un piloto\n5.Listar resultados de un GP\n6.Salir");
             int op = Integer.parseInt(System.console().readLine());
             pilotosService ps = new pilotosService(conn);
             resultadoservice rs = new resultadoservice(conn);
@@ -47,7 +47,17 @@ public class App {
                     }
                     menu(connpool);
                 case 4:
-                    
+                    ArrayList<resultado> listares = new ArrayList<resultado>();
+                    System.out.println("Ingrese el codigo del piloto");
+                    int codpil = Integer.parseInt(System.console().readLine());
+                    piloto pil = ps.requestById(codpil);
+                    listares = rs.requestbypil(pil);
+                    System.out.println("Resultados del piloto " + pil.getNamepiloto() + " " + pil.getSurnamepiloto() + ":");
+                    for (resultado res : listares) {
+                        System.out.println("resultado en "+res.getGP().getName_gp()+":");
+                        System.out.println(res.toString());
+                    }
+                    menu(connpool);
                 case 5:
                     System.out.println("Ingrese el codigo del GP");
                     int codgp = Integer.parseInt(System.console().readLine());

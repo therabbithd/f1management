@@ -93,7 +93,8 @@ public class resultadoservice implements CRUDSERVICE<resultado>{
         ResultSet rs = null;
         stmt = conn.createStatement();
         ArrayList<resultado> aux = new ArrayList<resultado>();
-        rs = stmt.executeQuery("SELECT CodGP,CodPil,pos,CASE WHEN pos = 1 THEN 25 WHEN pos = 2 THEN 18 WHEN pos = 3 THEN 15 WHEN pos = 4 THEN 12 WHEN pos = 5 THEN 10  WHEN pos = 6 THEN 8 WHEN pos = 7 THEN 6 WHEN pos = 8 THEN 4 WHEN pos = 9 THEN 2 WHEN pos = 10 THEN 1 ELSE 0 END as PUNTOS FROM resultado WHERE CodGP = " + gp.getCod_gp());
+        String query ="SELECT CodGP,CodPil,pos,CASE WHEN pos = 1 THEN 25 WHEN pos = 2 THEN 18 WHEN pos = 3 THEN 15 WHEN pos = 4 THEN 12 WHEN pos = 5 THEN 10  WHEN pos = 6 THEN 8 WHEN pos = 7 THEN 6 WHEN pos = 8 THEN 4 WHEN pos = 9 THEN 2 WHEN pos = 10 THEN 1 ELSE 0 END as PUNTOS FROM resultado  WHERE CodGP = " + gp.getCod_gp()+" order by pos asc";
+        rs = stmt.executeQuery(query);
         pilotosService ps = new pilotosService(conn);
         GPservice gs = new GPservice(conn);
         while (rs.next()) {
@@ -106,19 +107,30 @@ public class resultadoservice implements CRUDSERVICE<resultado>{
             resultado res = new resultado(pil,pos,gpp,puntos);
             aux.add(res);
         }
-        int posmax = 0;
-        ArrayList<resultado> aux2 = new ArrayList<resultado>();
-        for (int i = 1; i <= aux.size(); i++) {
-            for (resultado res : aux) {
-                if(res.getPos() == i) {
-                    aux2.add(res);
-                }
-            }
-            
-        }
-        return aux2;
+        stmt.close();
+        rs.close();
+        return aux;
     }
-    public ArrayList<resultado> requestbypil(pil){
-        
+    public ArrayList<resultado> requestbypil(piloto pil) throws SQLException {
+        Statement stmt = null;
+        ResultSet rs = null;
+        stmt = conn.createStatement();
+        ArrayList<resultado> aux = new ArrayList<resultado>();
+        rs = stmt.executeQuery("SELECT CodGP,CodPil,pos,CASE WHEN pos = 1 THEN 25 WHEN pos = 2 THEN 18 WHEN pos = 3 THEN 15 WHEN pos = 4 THEN 12 WHEN pos = 5 THEN 10  WHEN pos = 6 THEN 8 WHEN pos = 7 THEN 6 WHEN pos = 8 THEN 4 WHEN pos = 9 THEN 2 WHEN pos = 10 THEN 1 ELSE 0 END as PUNTOS FROM resultado WHERE CodPil = " + pil.getCod_piloto()+ " order by CodGP asc");
+        GPservice gs = new GPservice(conn);
+        pilotosService ps = new pilotosService(conn);
+        while(rs.next()){
+            int codgp = rs.getInt("CodGP");
+            int codpil = rs.getInt("CodPil");
+            int pos = rs.getInt("pos");
+            int puntos = rs.getInt("PUNTOS");
+            GP gpp = gs.requestById(codgp);
+            piloto pil1 = ps.requestById(codpil);
+            resultado res = new resultado(pil,pos,gpp,puntos);
+            aux.add(res);
+        }
+        return aux;
     }
 }
+
+
