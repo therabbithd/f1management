@@ -19,7 +19,7 @@ public class GPservice  implements CRUD.CRUDSERVICE<GP>{
         ResultSet rs = null;
         stmt = conn.createStatement();
         ArrayList<GP> aux = new ArrayList<GP>();
-        rs = stmt.executeQuery("SELECT * FROM GP");
+        rs = stmt.executeQuery("SELECT * FROM grandprix");
         while (rs.next()) {
             int codgp = rs.getInt("CodGP");
             String namegp = rs.getString("NomGP");
@@ -40,7 +40,7 @@ public class GPservice  implements CRUD.CRUDSERVICE<GP>{
         Statement stmt = null;
         ResultSet rs = null;
         stmt = conn.createStatement();
-        rs = stmt.executeQuery("SELECT * FROM GP WHERE CodGP = " + id);
+        rs = stmt.executeQuery("SELECT * FROM grandprix WHERE CodGP = " + id);
         GP aux = null;
         if (rs.next()) {
             int codgp = rs.getInt("CodGP");
@@ -58,7 +58,7 @@ public class GPservice  implements CRUD.CRUDSERVICE<GP>{
     public void create(GP model) throws SQLException {
         Statement stmt = null;
         stmt = conn.createStatement();
-        stmt.executeUpdate("INSERT INTO GP (NomGP, FecGP, NumGP) VALUES ('" + model.getName_gp() + "', '" + model.getDate_gp() + "', " + model.getNum_gp() + ")");
+        stmt.executeUpdate("INSERT INTO grandprix (NomGP, FecGP, NumGP) VALUES ('" + model.getName_gp() + "', '" + model.getDate_gp() + "', " + model.getNum_gp() + ")");
         stmt.close();
     }
 
@@ -66,7 +66,7 @@ public class GPservice  implements CRUD.CRUDSERVICE<GP>{
     public int update(GP object) throws SQLException {
         Statement stmt = null;
         stmt = conn.createStatement();
-        int result = stmt.executeUpdate("UPDATE GP SET NomGP = '" + object.getName_gp() + "', FecGP = '" + object.getDate_gp() + "', NumGP = " + object.getNum_gp() + " WHERE CodGP = " + object.getCod_gp());
+        int result = stmt.executeUpdate("UPDATE grandprix SET NomGP = '" + object.getName_gp() + "', FecGP = '" + object.getDate_gp() + "', NumGP = " + object.getNum_gp() + " WHERE CodGP = " + object.getCod_gp());
         stmt.close();
         if(result == 0){
             throw new SQLException("Update failed");
@@ -78,7 +78,7 @@ public class GPservice  implements CRUD.CRUDSERVICE<GP>{
     public boolean delete(long id) throws SQLException {
         Statement stmt = null;
         stmt = conn.createStatement();
-        int result = stmt.executeUpdate("DELETE FROM GP WHERE CodGP = " + id);
+        int result = stmt.executeUpdate("DELETE FROM grandprix WHERE CodGP = " + id);
         stmt.close();
         if(result == 0){
             throw new SQLException("Delete failed");

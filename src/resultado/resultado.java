@@ -5,11 +5,13 @@ public class resultado {
     piloto piloto;
     int pos;
     GP GP;
+    int puntos;
     int cod;
-    public resultado(pilotos.piloto piloto, int pos, GP GP) {
+    public resultado(pilotos.piloto piloto, int pos, GP GP,int puntos) {
         this.piloto = piloto;
         this.pos = pos;
         this.GP = GP;
+        this.puntos = puntos;
     }
     public pilotos.piloto getPiloto() {
         return piloto;
@@ -31,6 +33,6 @@ public class resultado {
     }
     @Override
     public String toString() {
-        return ""+pos+".- "+piloto.getNamepiloto()+" "+piloto.getSurnamepiloto()+"\n"+GP.getName_gp();
+        return ""+pos+".- "+piloto.getNamepiloto()+" "+piloto.getSurnamepiloto()+" "+puntos;
     }
 }
