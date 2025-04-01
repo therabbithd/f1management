@@ -108,7 +108,7 @@ public class App {
                     System.out.println("Ranking de pilotos:");
                     for (int i = 0; i < order.size(); i++) {
                         piloto pil2 = order.get(i);
-                        System.out.println((i + 1) + ".- " + pil2.getNamepiloto() + " " + pil2.getSurnamepiloto() + " " + pilypuntos.get(pil2));
+                        System.out.printf("%2d.- %s %s %d\n", i + 1,pil2.getNamepiloto(), pil2.getSurnamepiloto(), pilypuntos.get(pil2));
                     }
                     menu(connpool);
                 default:
