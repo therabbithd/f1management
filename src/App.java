@@ -13,7 +13,7 @@ public class App {
     public static void menu(connectionpool connpool) {
         try {
             Connection conn = connpool.getConnection();
-            System.out.println("1.Listar pilotos\n2.Listar pilotos por equipo\n3.Listar GPs\n4.Listar resultados de un piloto\n5.Listar resultados de un GP\n6.Salir");
+            System.out.println("1.Listar pilotos\n2.Listar pilotos por equipo\n3.Listar GPs\n4.Listar resultados de un piloto\n5.Listar resultados de un GP\n6.Ver ranking de pilotos");
             int op = Integer.parseInt(System.console().readLine());
             pilotosService ps = new pilotosService(conn);
             resultadoservice rs = new resultadoservice(conn);
@@ -21,7 +21,6 @@ public class App {
 
             switch (op) {
                 case 1:
-                    
                     ArrayList<piloto> listapilotos = ps.requestAll();
                     for (piloto piloto : listapilotos) {
                         System.out.println(piloto.toString()+"\n");
@@ -71,8 +70,47 @@ public class App {
                     }
                     menu(connpool);
                 case 6:
-                    conn.close();
-                    System.exit(0);
+                    HashMap<piloto,Integer> pilypuntos = new HashMap<piloto,Integer>();
+                    ArrayList<piloto> pils= new ArrayList<piloto>();
+                    pils = ps.requestAll();
+                    for (piloto pil2 : pils) {
+                        ArrayList<resultado> listares3 = new ArrayList<resultado>();
+                        listares3 = rs.requestbypil(pil2);
+                        int puntos = 0;
+                        for (resultado res : listares3) {
+                            puntos += res.getPuntos();
+                        }
+                        pilypuntos.put(pil2, puntos);
+                    }
+                    HashMap<piloto,Integer> pilypuntos2 = new HashMap<piloto,Integer>();
+                    pilypuntos2.putAll(pilypuntos);
+                    ArrayList<piloto> order = new ArrayList<piloto>();
+                    for (int i = 0; i < pilypuntos.size(); i++) {
+                        int max = 0;
+                        piloto maxpil =null;
+                        for (piloto pil2 : pilypuntos2.keySet()) {
+                            if (pilypuntos2.get(pil2) > max) {
+                                max = pilypuntos2.get(pil2);
+                                maxpil = pil2;
+                            }
+                        }
+                        if (maxpil == null) {
+                            break;
+                        }
+                        order.add(maxpil);
+                        pilypuntos2.remove(maxpil);
+                    }
+                    for (piloto p : pilypuntos.keySet()) {
+                        if (pilypuntos.get(p) == 0) {
+                            order.add(p);
+                        }
+                    }
+                    System.out.println("Ranking de pilotos:");
+                    for (int i = 0; i < order.size(); i++) {
+                        piloto pil2 = order.get(i);
+                        System.out.println((i + 1) + ".- " + pil2.getNamepiloto() + " " + pil2.getSurnamepiloto() + " " + pilypuntos.get(pil2));
+                    }
+                    menu(connpool);
                 default:
                     System.out.println("Opción no válida. Intente de nuevo.");
             }

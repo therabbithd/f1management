@@ -22,6 +22,9 @@ public class resultado {
     public int getPos() {
         return pos;
     }
+    public int getPuntos() {
+        return puntos;
+    }
     public void setPos(int pos) {
         this.pos = pos;
     }
