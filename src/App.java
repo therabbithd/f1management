@@ -9,6 +9,7 @@ import pilotos.piloto;
 import pilotos.pilotosService;
 import resultado.resultado;
 import resultado.resultadoservice;
+import equipos.*;
 public class App {
     public static void menu(connectionpool connpool) {
         try {
@@ -18,7 +19,7 @@ public class App {
             pilotosService ps = new pilotosService(conn);
             resultadoservice rs = new resultadoservice(conn);
             GPservice gps = new GPservice(conn);
-
+            equiposervice es = new equiposervice(conn);
             switch (op) {
                 case 1:
                     ArrayList<piloto> listapilotos = ps.requestAll();
@@ -106,12 +107,58 @@ public class App {
                         }
                     }
                     System.out.println("Ranking de pilotos:");
+                    System.out.printf("%4s %-10s %-20s %s %s\n","Pos","Nombre","Apellido","Puntos","Equipo");
+
                     for (int i = 0; i < order.size(); i++) {
                         piloto pil2 = order.get(i);
-                        System.out.printf("%2d.- %s %s %d\n", i + 1,pil2.getNamepiloto(), pil2.getSurnamepiloto(), pilypuntos.get(pil2));
+
+                        System.out.printf("%2d.- %-10s %-20s %-6d %s\n", i + 1,pil2.getNamepiloto(), pil2.getSurnamepiloto(), pilypuntos.get(pil2),pil2.getEquipo().getName_equipo());
                     }
                     menu(connpool);
-                    
+                case 7:
+                ArrayList<equipo> listaeq = new ArrayList<equipo>();
+                HashMap<equipo,Integer> eqypuntos = new HashMap<equipo,Integer>();
+                listaeq = es.requestAll();
+                for (equipo eq : listaeq) {
+                    int puntos = 0;
+                    ArrayList<resultado> listares4 = new ArrayList<resultado>();
+                    listares4 = rs.requestbyequipo(eq);
+                    for (resultado res : listares4) {
+                        puntos += res.getPuntos();
+                    }
+                    eqypuntos.put(eq, puntos);
+                }
+                HashMap<equipo,Integer> eqypuntos2 = new HashMap<equipo,Integer>();
+                eqypuntos2.putAll(eqypuntos);
+                ArrayList<equipo> order2 = new ArrayList<equipo>();
+                for (int i = 0; i < eqypuntos.size(); i++) {
+                    int max = 0;
+                    equipo maxeq =null;
+                    for (equipo eq : eqypuntos2.keySet()) {
+                        if (eqypuntos2.get(eq) > max) {
+                            max = eqypuntos2.get(eq);
+                            maxeq = eq;
+                        }
+                    }
+                    if (maxeq == null) {
+                        break;
+                    }
+                    order2.add(maxeq);
+                    eqypuntos2.remove(maxeq);
+                }
+                for (equipo eq : eqypuntos.keySet()) {
+                    if (eqypuntos.get(eq) == 0) {
+                        order2.add(eq);
+                    }
+                }
+                System.out.println("Ranking de equipos:");
+                System.out.printf("%4s %-50s %s\n","Pos","Nombre","Puntos");
+                for (int i = 0; i < order2.size(); i++) {
+                    equipo eq = order2.get(i);
+                    System.out.printf("%2d.- %-50s %-6d\n", i + 1,eq.getName_equipo(), eqypuntos.get(eq));
+                }
+                menu(connpool);
+
                 default:
                     System.out.println("Opción no válida. Intente de nuevo.");
             }
