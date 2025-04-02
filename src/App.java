@@ -64,7 +64,7 @@ public class App {
                     ArrayList<resultado> listares2 = new ArrayList<resultado>();
                     listares2 = rs.requestByGP(gp);
                     System.out.println("Resultados del GP " + gp.getName_gp() + ":");
-
+                    System.out.printf("%4s %-10s %-20s %s %s\n","Pos","Nombre","Apellido","Puntos","Equipo");
                     for (resultado res : listares2) {
                         System.out.println(res.toString());
                     }

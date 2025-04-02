@@ -36,6 +36,6 @@ public class resultado {
     }
     @Override
     public String toString() {
-        return ""+pos+".- "+piloto.getNamepiloto()+" "+piloto.getSurnamepiloto()+" "+puntos;
+        return String.format("%2d.- %-10s %-20s %-6d %s",pos,piloto.getNamepiloto(),piloto.getSurnamepiloto(),puntos,piloto.getEquipo().getName_equipo());
     }
 }
