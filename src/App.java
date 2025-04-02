@@ -157,6 +157,7 @@ public class App {
                     equipo eq = order2.get(i);
                     System.out.printf("%2d.- %-50s %-6d\n", i + 1,eq.getName_equipo(), eqypuntos.get(eq));
                 }
+                System.out.println("");
                 menu(connpool);
 
                 default:
