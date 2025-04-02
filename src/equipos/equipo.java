@@ -29,5 +29,10 @@ public class equipo {
     public void setMotor(Motor.motor motor) {
         this.motor = motor;
     }
+
+    @Override
+    public String toString() {
+        return "Nombre:"+this.name_equipo+"\nMotor: "+motor.getName_motor()+"\nCodigo: "+cod_equipo;
+    }
     
 }

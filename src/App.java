@@ -1,5 +1,6 @@
 import java.security.spec.PSSParameterSpec;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import equipos.*;
@@ -10,13 +11,19 @@ import pilotos.piloto;
 import pilotos.pilotosService;
 import resultado.resultado;
 import resultado.resultadoservice;
+import java.text.SimpleDateFormat;
+
 import equipos.*;
 import Motor.*;
+import java.lang.reflect.Array;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.util.Date;
 public class App {
     public static void menu(connectionpool connpool) {
         try {
             Connection conn = connpool.getConnection();
-            System.out.println("1.Listar pilotos\n2.Listar pilotos por equipo\n3.Listar GPs\n4.Listar resultados de un piloto\n5.Listar motores\n6.Listar resultados de un GP\n7.Ver ranking de pilotos\n8.Mostrar ranking por equipos\n9.Mostrar ranking por motor\n10.insertar en una tabla n11.eliminar un campo\n12.actualizar un campo\n13.salir");
+            System.out.println("1.Listar datos\n2.Listar pilotos por equipo\n3.Listar GPs\n4.Listar resultados de un piloto\n5.Listar motores\n6.Listar resultados de un GP\n7.Ver ranking de pilotos\n8.Mostrar ranking por equipos\n9.Mostrar ranking por motor\n10.insertar en una tabla n11.eliminar un campo\n12.actualizar un campo\n13.salir");
             int op = Integer.parseInt(System.console().readLine());
             pilotosService ps = new pilotosService(conn);
             resultadoservice rs = new resultadoservice(conn);
@@ -25,8 +32,36 @@ public class App {
             motorservice ms = new motorservice(conn);
             switch (op) {
                 case 1:
-                    listarpilotos(ps);
-                    menu(connpool);
+                    System.out.println("1.pilotos\n2.Equipos\n3.Motor\n4.Resultados");
+                    int oplis = Integer.parseInt(System.console().readLine());
+                    switch (oplis) {
+                        case 1:
+                            System.out.println("1.Listar todos los pilotos\n2.Listar los pilotos de un equipo");
+                            int oppil = Integer.parseInt(System.console().readLine());
+                            switch (oppil) {
+                                case 1:
+                                    listarpilotos(ps);
+                                    menu(connpool);
+                                    break;
+                                case 2:
+                                    listarpilporeq(ps);
+                                    menu(connpool);
+                                
+                                default:
+                                    throw new AssertionError();
+                            }
+                            break;
+                            case 2:
+                            listarequipos(es);
+                            menu(connpool);
+                            case 3:
+                            listarmotor(ms);
+                            menu(connpool);
+
+                            
+                        default:
+                            throw new AssertionError();
+                    }
                 case 2:
                     listarpilporeq(ps);
                     menu(connpool);
@@ -50,55 +85,23 @@ public class App {
                 
                 menu(connpool);
                 case 9:
-                ArrayList<motor> listamotor = new ArrayList<motor>();
-                HashMap<motor,Integer> motorypuntos = new HashMap<motor,Integer>();
-                listamotor = ms.requestAll();
-                for (motor mot : listamotor) {
-                    int puntos = 0;
-                    ArrayList<resultado> listares5 = new ArrayList<resultado>();
-                    listares5 = rs.requestbymotor(mot);
-                    for (resultado res : listares5) {
-                        puntos += res.getPuntos();
-                    }
-                    motorypuntos.put(mot, puntos);
-                }
-                HashMap<motor,Integer> motorypuntos2 = new HashMap<motor,Integer>();
-                motorypuntos2.putAll(motorypuntos);
-                ArrayList<motor> order3 = new ArrayList<motor>();
-                for (int i = 0; i < motorypuntos.size(); i++) {
-                    int max = 0;
-                    motor maxmot =null;
-                    for (motor mot : motorypuntos2.keySet()) {
-                        if (motorypuntos2.get(mot) > max) {
-                            max = motorypuntos2.get(mot);
-                            maxmot = mot;
-                        }
-                    }
-                    if (maxmot == null) {
-                        break;
-                    }
-                    order3.add(maxmot);
-                    motorypuntos2.remove(maxmot);
-                }
-                for (motor mot : motorypuntos.keySet()) {
-                    if (motorypuntos.get(mot) == 0) {
-                        order3.add(mot);
-                    }
-                }
-                System.out.println("Ranking de motores:");
-                System.out.printf("%4s %-50s %s\n","Pos","Nombre","Puntos");
-                for (int i = 0; i < order3.size(); i++) {
-                    motor mot = order3.get(i);
-                    System.out.printf("%2d.- %-50s %-6d\n", i + 1,mot.getName_motor(), motorypuntos.get(mot));
-                }
-                System.out.println("");
+                mostrarrankingmot(ms,rs);
                 menu(connpool);
                 case 10:
-                    System.out.println("Ingrese el nombre del motor");
-                    String name_motor = System.console().readLine();
-                    motor mot = new motor(0, name_motor);
-                    ms.create(mot);
-                    menu(connpool);
+                    System.out.println("1.Equipos\n2.Motor\n3.pilotos");
+                    int opins = Integer.parseInt(System.console().readLine());
+                    switch (opins) {
+                        case 1:
+                            ingresarequipo(es,ms);
+                            menu(connpool);
+                        case 2:
+                            ingresarmotor(ms);
+                            menu(connpool);
+                        case 3:
+                            ingresarpiloto(ps,es);
+                        default:
+                            throw new AssertionError();
+                    }
                 case 11:
                     System.out.print("Ingrese el codigo del motor :");
                     int codmotor = Integer.parseInt(System.console().readLine());
@@ -272,5 +275,89 @@ public class App {
                 }
                 System.out.println("");
     }
+    public static void mostrarrankingmot(motorservice ms, resultadoservice rs) throws SQLException{
+        ArrayList<motor> listamotor = new ArrayList<motor>();
+                HashMap<motor,Integer> motorypuntos = new HashMap<motor,Integer>();
+                listamotor = ms.requestAll();
+                for (motor mot : listamotor) {
+                    int puntos = 0;
+                    ArrayList<resultado> listares5 = new ArrayList<resultado>();
+                    listares5 = rs.requestbymotor(mot);
+                    for (resultado res : listares5) {
+                        puntos += res.getPuntos();
+                    }
+                    motorypuntos.put(mot, puntos);
+                }
+                HashMap<motor,Integer> motorypuntos2 = new HashMap<motor,Integer>();
+                motorypuntos2.putAll(motorypuntos);
+                ArrayList<motor> order3 = new ArrayList<motor>();
+                for (int i = 0; i < motorypuntos.size(); i++) {
+                    int max = 0;
+                    motor maxmot =null;
+                    for (motor mot : motorypuntos2.keySet()) {
+                        if (motorypuntos2.get(mot) > max) {
+                            max = motorypuntos2.get(mot);
+                            maxmot = mot;
+                        }
+                    }
+                    if (maxmot == null) {
+                        break;
+                    }
+                    order3.add(maxmot);
+                    motorypuntos2.remove(maxmot);
+                }
+                for (motor mot : motorypuntos.keySet()) {
+                    if (motorypuntos.get(mot) == 0) {
+                        order3.add(mot);
+                    }
+                }
+                System.out.println("Ranking de motores:");
+                System.out.printf("%4s %-50s %s\n","Pos","Nombre","Puntos");
+                for (int i = 0; i < order3.size(); i++) {
+                    motor mot = order3.get(i);
+                    System.out.printf("%2d.- %-50s %-6d\n", i + 1,mot.getName_motor(), motorypuntos.get(mot));
+                }
+                System.out.println("");
+    }
+    public static void ingresarequipo(equiposervice es, motorservice ms) throws SQLException {
+        System.out.println("pon el nombre del equipo");
+        String nom = System.console().readLine();
+        System.out.println("pon el codigo del motor");
+        int cod = Integer.parseInt(System.console().readLine());
+        motor mot = ms.requestById(cod);
+        equipo EQ = new equipo(0, nom, mot);
+        es.create(EQ);
+    }
+    public static void ingresarmotor(motorservice ms) throws SQLException{
+        System.out.println("Ingresa el nombre del motor");
+        String nom = System.console().readLine();
+        motor mot = new motor(0, nom);
+        ms.create(mot);
+    }
+    public static void ingresarpiloto(pilotosService ps,equiposervice es) throws SQLException{
+        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");        System.out.println("Ingresa el nombre del piloto: ");
+        String nom = System.console().readLine();
+        System.out.println("Ingresa el apellido del piloto: ");
+        String ape = System.console().readLine();
+        System.out.println("Ingresa su fecha de nacimiento (dd/MM/yyyy) ");
+        Date date = new Date();
+        try {
+             date =formato.parse(System.console().readLine());
+        } catch (ParseException e) {
+            System.out.println("el formato no es el correcto utiliza el formato dd/MM/yyyy ");
+        }
+        System.out.println("introduce el codigo del equipo");
+        int cod = Integer.parseInt(System.console().readLine());
+        equipo eq = es.requestById(cod);
+        piloto pil = new piloto(0, nom, ape, date, eq, cod);
 
+        
+        }
+    public static void listarequipos(equiposervice es) throws SQLException{
+        ArrayList<equipo> equipos = es.requestAll();
+        for(equipo e : equipos){
+            System.out.println(e);
+        }
+    }
 }
+
