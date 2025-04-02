@@ -46,49 +46,8 @@ public class App {
                     mostrarranking(ps,rs);
                     menu(connpool);
                 case 8:
-                    
-                ArrayList<equipo> listaeq = new ArrayList<equipo>();
-                HashMap<equipo,Integer> eqypuntos = new HashMap<equipo,Integer>();
-                listaeq = es.requestAll();
-                for (equipo eq : listaeq) {
-                    int puntos = 0;
-                    ArrayList<resultado> listares4 = new ArrayList<resultado>();
-                    listares4 = rs.requestbyequipo(eq);
-                    for (resultado res : listares4) {
-                        puntos += res.getPuntos();
-                    }
-                    eqypuntos.put(eq, puntos);
-                }
-                HashMap<equipo,Integer> eqypuntos2 = new HashMap<equipo,Integer>();
-                eqypuntos2.putAll(eqypuntos);
-                ArrayList<equipo> order2 = new ArrayList<equipo>();
-                for (int i = 0; i < eqypuntos.size(); i++) {
-                    int max = 0;
-                    equipo maxeq =null;
-                    for (equipo eq : eqypuntos2.keySet()) {
-                        if (eqypuntos2.get(eq) > max) {
-                            max = eqypuntos2.get(eq);
-                            maxeq = eq;
-                        }
-                    }
-                    if (maxeq == null) {
-                        break;
-                    }
-                    order2.add(maxeq);
-                    eqypuntos2.remove(maxeq);
-                }
-                for (equipo eq : eqypuntos.keySet()) {
-                    if (eqypuntos.get(eq) == 0) {
-                        order2.add(eq);
-                    }
-                }
-                System.out.println("Ranking de equipos:");
-                System.out.printf("%4s %-50s %s\n","Pos","Nombre","Puntos");
-                for (int i = 0; i < order2.size(); i++) {
-                    equipo eq = order2.get(i);
-                    System.out.printf("%2d.- %-50s %-6d\n", i + 1,eq.getName_equipo(), eqypuntos.get(eq));
-                }
-                System.out.println("");
+                mostrarrankingeq(es, rs);
+                
                 menu(connpool);
                 case 9:
                 ArrayList<motor> listamotor = new ArrayList<motor>();
@@ -268,6 +227,50 @@ public class App {
 
                         System.out.printf("%2d.- %-10s %-20s %-6d %s\n", i + 1,pil2.getNamepiloto(), pil2.getSurnamepiloto(), pilypuntos.get(pil2),pil2.getEquipo().getName_equipo());
                     }
+    }
+    public static void mostrarrankingeq(equiposervice es, resultadoservice rs) throws SQLException{
+        ArrayList<equipo> listaeq = new ArrayList<equipo>();
+                HashMap<equipo,Integer> eqypuntos = new HashMap<equipo,Integer>();
+                listaeq = es.requestAll();
+                for (equipo eq : listaeq) {
+                    int puntos = 0;
+                    ArrayList<resultado> listares4 = new ArrayList<resultado>();
+                    listares4 = rs.requestbyequipo(eq);
+                    for (resultado res : listares4) {
+                        puntos += res.getPuntos();
+                    }
+                    eqypuntos.put(eq, puntos);
+                }
+                HashMap<equipo,Integer> eqypuntos2 = new HashMap<equipo,Integer>();
+                eqypuntos2.putAll(eqypuntos);
+                ArrayList<equipo> order2 = new ArrayList<equipo>();
+                for (int i = 0; i < eqypuntos.size(); i++) {
+                    int max = 0;
+                    equipo maxeq =null;
+                    for (equipo eq : eqypuntos2.keySet()) {
+                        if (eqypuntos2.get(eq) > max) {
+                            max = eqypuntos2.get(eq);
+                            maxeq = eq;
+                        }
+                    }
+                    if (maxeq == null) {
+                        break;
+                    }
+                    order2.add(maxeq);
+                    eqypuntos2.remove(maxeq);
+                }
+                for (equipo eq : eqypuntos.keySet()) {
+                    if (eqypuntos.get(eq) == 0) {
+                        order2.add(eq);
+                    }
+                }
+                System.out.println("Ranking de equipos:");
+                System.out.printf("%4s %-50s %s\n","Pos","Nombre","Puntos");
+                for (int i = 0; i < order2.size(); i++) {
+                    equipo eq = order2.get(i);
+                    System.out.printf("%2d.- %-50s %-6d\n", i + 1,eq.getName_equipo(), eqypuntos.get(eq));
+                }
+                System.out.println("");
     }
 
 }
