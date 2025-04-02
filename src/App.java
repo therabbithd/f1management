@@ -10,16 +10,18 @@ import pilotos.pilotosService;
 import resultado.resultado;
 import resultado.resultadoservice;
 import equipos.*;
+import Motor.*;
 public class App {
     public static void menu(connectionpool connpool) {
         try {
             Connection conn = connpool.getConnection();
-            System.out.println("1.Listar pilotos\n2.Listar pilotos por equipo\n3.Listar GPs\n4.Listar resultados de un piloto\n5.Listar resultados de un GP\n6.Ver ranking de pilotos\n7.Mostrar ranking por equipos");
+            System.out.println("1.Listar pilotos\n2.Listar pilotos por equipo\n3.Listar GPs\n4.Listar resultados de un piloto\n5.Listar motores\n6.Listar resultados de un GP\n7.Ver ranking de pilotos\n8.Mostrar ranking por equipos\n9.Mostrar ranking por motor\n10.Crear Motor\n11.Eliminar Motor\n12.Salir");
             int op = Integer.parseInt(System.console().readLine());
             pilotosService ps = new pilotosService(conn);
             resultadoservice rs = new resultadoservice(conn);
             GPservice gps = new GPservice(conn);
             equiposervice es = new equiposervice(conn);
+            motorservice ms = new motorservice(conn);
             switch (op) {
                 case 1:
                     ArrayList<piloto> listapilotos = ps.requestAll();
@@ -59,6 +61,13 @@ public class App {
                     }
                     menu(connpool);
                 case 5:
+                    ArrayList<motor> listmotor = new ArrayList<motor>();
+                    listmotor = ms.requestAll();
+                    for (motor mot : listmotor) {
+                        System.out.println(mot.toString()+"\n");
+                    }
+                    menu(connpool);
+                case 6:
                     System.out.println("Ingrese el codigo del GP");
                     int codgp = Integer.parseInt(System.console().readLine());
                     GP gp = gps.requestById(codgp);
@@ -70,7 +79,7 @@ public class App {
                         System.out.println(res.toString());
                     }
                     menu(connpool);
-                case 6:
+                case 7:
                     HashMap<piloto,Integer> pilypuntos = new HashMap<piloto,Integer>();
                     ArrayList<piloto> pils= new ArrayList<piloto>();
                     pils = ps.requestAll();
@@ -115,7 +124,7 @@ public class App {
                         System.out.printf("%2d.- %-10s %-20s %-6d %s\n", i + 1,pil2.getNamepiloto(), pil2.getSurnamepiloto(), pilypuntos.get(pil2),pil2.getEquipo().getName_equipo());
                     }
                     menu(connpool);
-                case 7:
+                case 8:
                 ArrayList<equipo> listaeq = new ArrayList<equipo>();
                 HashMap<equipo,Integer> eqypuntos = new HashMap<equipo,Integer>();
                 listaeq = es.requestAll();
@@ -159,10 +168,73 @@ public class App {
                 }
                 System.out.println("");
                 menu(connpool);
+                case 9:
+                ArrayList<motor> listamotor = new ArrayList<motor>();
+                HashMap<motor,Integer> motorypuntos = new HashMap<motor,Integer>();
+                listamotor = ms.requestAll();
+                for (motor mot : listamotor) {
+                    int puntos = 0;
+                    ArrayList<resultado> listares5 = new ArrayList<resultado>();
+                    listares5 = rs.requestbymotor(mot);
+                    for (resultado res : listares5) {
+                        puntos += res.getPuntos();
+                    }
+                    motorypuntos.put(mot, puntos);
+                }
+                HashMap<motor,Integer> motorypuntos2 = new HashMap<motor,Integer>();
+                motorypuntos2.putAll(motorypuntos);
+                ArrayList<motor> order3 = new ArrayList<motor>();
+                for (int i = 0; i < motorypuntos.size(); i++) {
+                    int max = 0;
+                    motor maxmot =null;
+                    for (motor mot : motorypuntos2.keySet()) {
+                        if (motorypuntos2.get(mot) > max) {
+                            max = motorypuntos2.get(mot);
+                            maxmot = mot;
+                        }
+                    }
+                    if (maxmot == null) {
+                        break;
+                    }
+                    order3.add(maxmot);
+                    motorypuntos2.remove(maxmot);
+                }
+                for (motor mot : motorypuntos.keySet()) {
+                    if (motorypuntos.get(mot) == 0) {
+                        order3.add(mot);
+                    }
+                }
+                System.out.println("Ranking de motores:");
+                System.out.printf("%4s %-50s %s\n","Pos","Nombre","Puntos");
+                for (int i = 0; i < order3.size(); i++) {
+                    motor mot = order3.get(i);
+                    System.out.printf("%2d.- %-50s %-6d\n", i + 1,mot.getName_motor(), motorypuntos.get(mot));
+                }
+                System.out.println("");
+                menu(connpool);
+                case 10:
+                    System.out.println("Ingrese el nombre del motor");
+                    String name_motor = System.console().readLine();
+                    motor mot = new motor(0, name_motor);
+                    ms.create(mot);
+                    menu(connpool);
+                case 11:
+                    System.out.print("Ingrese el codigo del motor :");
+                    int codmotor = Integer.parseInt(System.console().readLine());
+                    if(ms.delete(codmotor)){
+                        System.out.println("Motor eliminado correctamente");
+                    }
+                    else{
+                        System.out.println("No se ha podido eliminar el motor");
+                    }
+                    menu(connpool);
+                case 12:
+                    
 
                 default:
                     System.out.println("Opción no válida. Intente de nuevo.");
             }
+        
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }

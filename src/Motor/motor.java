@@ -19,5 +19,8 @@ public class motor {
     public void setName_motor(String name_motor) {
         this.name_motor = name_motor;
     }
-    
+    @Override
+    public String toString() {
+        return "Nombre: "+name_motor+"\nCodigo: "+cod_motor;
+    }
 }

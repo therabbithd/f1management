@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import CRUD.CRUDSERVICE;
 import GP.GP;
 import GP.GPservice;
+import Motor.motor;
 import equipos.equipo;
 import pilotos.piloto;
 import pilotos.pilotosService;
@@ -142,6 +143,17 @@ public class resultadoservice implements CRUDSERVICE<resultado>{
             }
        }
         return resultadosporEquipo;
+    }
+    public ArrayList<resultado> requestbymotor(motor mot) throws SQLException {
+        ArrayList<resultado> resultados = new ArrayList<resultado>();
+        resultados = requestAll();
+        ArrayList<resultado> resultadosporMotor = new ArrayList<resultado>();
+        for(resultado res : resultados){
+            if(res.getPiloto().getEquipo().getMotor().getCod_motor() == mot.getCod_motor()){
+                resultadosporMotor.add(res);
+            }
+        }
+        return resultadosporMotor;
     }
 }
 
