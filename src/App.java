@@ -1,3 +1,4 @@
+import java.security.spec.PSSParameterSpec;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +16,7 @@ public class App {
     public static void menu(connectionpool connpool) {
         try {
             Connection conn = connpool.getConnection();
-            System.out.println("1.Listar pilotos\n2.Listar pilotos por equipo\n3.Listar GPs\n4.Listar resultados de un piloto\n5.Listar motores\n6.Listar resultados de un GP\n7.Ver ranking de pilotos\n8.Mostrar ranking por equipos\n9.Mostrar ranking por motor\n10.Crear Motor\n11.Eliminar Motor\n12.Salir");
+            System.out.println("1.Listar pilotos\n2.Listar pilotos por equipo\n3.Listar GPs\n4.Listar resultados de un piloto\n5.Listar motores\n6.Listar resultados de un GP\n7.Ver ranking de pilotos\n8.Mostrar ranking por equipos\n9.Mostrar ranking por motor\n10.insertar en una tabla n11.eliminar un campo\n12.actualizar un campo\n13.salir");
             int op = Integer.parseInt(System.console().readLine());
             pilotosService ps = new pilotosService(conn);
             resultadoservice rs = new resultadoservice(conn);
@@ -24,107 +25,28 @@ public class App {
             motorservice ms = new motorservice(conn);
             switch (op) {
                 case 1:
-                    ArrayList<piloto> listapilotos = ps.requestAll();
-                    for (piloto piloto : listapilotos) {
-                        System.out.println(piloto.toString()+"\n");
-                    }
-                    break;
+                    listarpilotos(ps);
+                    menu(connpool);
                 case 2:
-                    pilotosService ps2 = new pilotosService(conn);
-                    HashMap<equipo, ArrayList<piloto>> pilporeq = ps2.requestAllByEquipo();
-                    for (equipo eq : pilporeq.keySet()) {
-                        System.out.println("Equipo: " + eq.getName_equipo()+"\n#####################");
-                        ArrayList<piloto> pilotos = pilporeq.get(eq);
-                        for (piloto piloto : pilotos) {
-                            System.out.println(piloto.toString()+"\n");
-                        }
-                    }
+                    listarpilporeq(ps);
                     menu(connpool);
                 case 3:
-                    ArrayList<GP> listagp = new ArrayList<GP>();
-                    
-                    listagp = gps.requestAll();
-                    for (GP gp : listagp) {
-                        System.out.println(gp+"\n");
-                    }
+                    listargps(gps);
                     menu(connpool);
                 case 4:
-                    ArrayList<resultado> listares = new ArrayList<resultado>();
-                    System.out.println("Ingrese el codigo del piloto");
-                    int codpil = Integer.parseInt(System.console().readLine());
-                    piloto pil = ps.requestById(codpil);
-                    listares = rs.requestbypil(pil);
-                    System.out.println("Resultados del piloto " + pil.getNamepiloto() + " " + pil.getSurnamepiloto() + ":");
-                    for (resultado res : listares) {
-                        System.out.println("resultado en "+res.getGP().getName_gp()+":");
-                        System.out.println(res.toString());
-                    }
+                    listarresporpil(ps,rs);
                     menu(connpool);
                 case 5:
-                    ArrayList<motor> listmotor = new ArrayList<motor>();
-                    listmotor = ms.requestAll();
-                    for (motor mot : listmotor) {
-                        System.out.println(mot.toString()+"\n");
-                    }
+                    listarmotor(ms);
                     menu(connpool);
                 case 6:
-                    System.out.println("Ingrese el codigo del GP");
-                    int codgp = Integer.parseInt(System.console().readLine());
-                    GP gp = gps.requestById(codgp);
-                    ArrayList<resultado> listares2 = new ArrayList<resultado>();
-                    listares2 = rs.requestByGP(gp);
-                    System.out.println("Resultados del GP " + gp.getName_gp() + ":");
-                    System.out.printf("%4s %-10s %-20s %s %s\n","Pos","Nombre","Apellido","Puntos","Equipo");
-                    for (resultado res : listares2) {
-                        System.out.println(res.toString());
-                    }
+                    listarresporgp(gps,rs);
                     menu(connpool);
                 case 7:
-                    HashMap<piloto,Integer> pilypuntos = new HashMap<piloto,Integer>();
-                    ArrayList<piloto> pils= new ArrayList<piloto>();
-                    pils = ps.requestAll();
-                    for (piloto pil2 : pils) {
-                        ArrayList<resultado> listares3 = new ArrayList<resultado>();
-                        listares3 = rs.requestbypil(pil2);
-                        int puntos = 0;
-                        for (resultado res : listares3) {
-                            puntos += res.getPuntos();
-                        }
-                        pilypuntos.put(pil2, puntos);
-                    }
-                    HashMap<piloto,Integer> pilypuntos2 = new HashMap<piloto,Integer>();
-                    pilypuntos2.putAll(pilypuntos);
-                    ArrayList<piloto> order = new ArrayList<piloto>();
-                    for (int i = 0; i < pilypuntos.size(); i++) {
-                        int max = 0;
-                        piloto maxpil =null;
-                        for (piloto pil2 : pilypuntos2.keySet()) {
-                            if (pilypuntos2.get(pil2) > max) {
-                                max = pilypuntos2.get(pil2);
-                                maxpil = pil2;
-                            }
-                        }
-                        if (maxpil == null) {
-                            break;
-                        }
-                        order.add(maxpil);
-                        pilypuntos2.remove(maxpil);
-                    }
-                    for (piloto p : pilypuntos.keySet()) {
-                        if (pilypuntos.get(p) == 0) {
-                            order.add(p);
-                        }
-                    }
-                    System.out.println("Ranking de pilotos:");
-                    System.out.printf("%4s %-10s %-20s %s %s\n","Pos","Nombre","Apellido","Puntos","Equipo");
-
-                    for (int i = 0; i < order.size(); i++) {
-                        piloto pil2 = order.get(i);
-
-                        System.out.printf("%2d.- %-10s %-20s %-6d %s\n", i + 1,pil2.getNamepiloto(), pil2.getSurnamepiloto(), pilypuntos.get(pil2),pil2.getEquipo().getName_equipo());
-                    }
+                    mostrarranking(ps,rs);
                     menu(connpool);
                 case 8:
+                    
                 ArrayList<equipo> listaeq = new ArrayList<equipo>();
                 HashMap<equipo,Integer> eqypuntos = new HashMap<equipo,Integer>();
                 listaeq = es.requestAll();
@@ -247,5 +169,105 @@ public class App {
         connectionpool connpool = new connectionpool(URL, USER, PASS);
          menu(connpool);
     }
-    
+    public static void listarpilotos(pilotosService ps) throws SQLException, ClassNotFoundException {
+        ArrayList<piloto> listapilotos = ps.requestAll();
+                    for (piloto piloto : listapilotos) {
+                        System.out.println(piloto.toString()+"\n");
+                    }
+        }
+    public static void listarpilporeq(pilotosService ps) throws SQLException{
+       HashMap<equipo, ArrayList<piloto>> pilporeq = ps.requestAllByEquipo();
+                    for (equipo eq : pilporeq.keySet()) {
+                        System.out.println("Equipo: " + eq.getName_equipo()+"\n#####################");
+                        ArrayList<piloto> pilotos = pilporeq.get(eq);
+                        for (piloto piloto : pilotos) {
+                            System.out.println(piloto.toString()+"\n");
+                        }
+                    }
+    }
+
+    public static void listargps(GPservice gps) throws SQLException{
+        ArrayList<GP> listagp = new ArrayList<GP>();
+        listagp = gps.requestAll();
+        for (GP gp : listagp) {
+            System.out.println(gp+"\n");
+        }
+    }
+    public static void listarresporpil(pilotosService ps,resultadoservice rs) throws SQLException{
+        ArrayList<resultado> listares = new ArrayList<resultado>();
+                    System.out.println("Ingrese el codigo del piloto");
+                    int codpil = Integer.parseInt(System.console().readLine());
+                    piloto pil = ps.requestById(codpil);
+                    listares = rs.requestbypil(pil);
+                    System.out.println("Resultados del piloto " + pil.getNamepiloto() + " " + pil.getSurnamepiloto() + ":");
+                    for (resultado res : listares) {
+                        System.out.println("resultado en "+res.getGP().getName_gp()+":");
+                        System.out.println(res.toString());
+                    }
+    }
+    public static void listarmotor(motorservice ms) throws SQLException{
+        ArrayList<motor> listmotor = new ArrayList<motor>();
+                    listmotor = ms.requestAll();
+                    for (motor mot : listmotor) {
+                        System.out.println(mot.toString()+"\n");
+                    }
+    }
+    public static void listarresporgp(GPservice gps,resultadoservice rs) throws SQLException{
+        System.out.println("Ingrese el codigo del GP");
+                    int codgp = Integer.parseInt(System.console().readLine());
+                    GP gp = gps.requestById(codgp);
+                    ArrayList<resultado> listares2 = new ArrayList<resultado>();
+                    listares2 = rs.requestByGP(gp);
+                    System.out.println("Resultados del GP " + gp.getName_gp() + ":");
+                    System.out.printf("%4s %-10s %-20s %s %s\n","Pos","Nombre","Apellido","Puntos","Equipo");
+                    for (resultado res : listares2) {
+                        System.out.println(res.toString());
+                    }
+    }
+    public static void mostrarranking(pilotosService ps, resultadoservice rs) throws SQLException{
+        HashMap<piloto,Integer> pilypuntos = new HashMap<piloto,Integer>();
+                    ArrayList<piloto> pils= new ArrayList<piloto>();
+                    pils = ps.requestAll();
+                    for (piloto pil2 : pils) {
+                        ArrayList<resultado> listares3 = new ArrayList<resultado>();
+                        listares3 = rs.requestbypil(pil2);
+                        int puntos = 0;
+                        for (resultado res : listares3) {
+                            puntos += res.getPuntos();
+                        }
+                        pilypuntos.put(pil2, puntos);
+                    }
+                    HashMap<piloto,Integer> pilypuntos2 = new HashMap<piloto,Integer>();
+                    pilypuntos2.putAll(pilypuntos);
+                    ArrayList<piloto> order = new ArrayList<piloto>();
+                    for (int i = 0; i < pilypuntos.size(); i++) {
+                        int max = 0;
+                        piloto maxpil =null;
+                        for (piloto pil2 : pilypuntos2.keySet()) {
+                            if (pilypuntos2.get(pil2) > max) {
+                                max = pilypuntos2.get(pil2);
+                                maxpil = pil2;
+                            }
+                        }
+                        if (maxpil == null) {
+                            break;
+                        }
+                        order.add(maxpil);
+                        pilypuntos2.remove(maxpil);
+                    }
+                    for (piloto p : pilypuntos.keySet()) {
+                        if (pilypuntos.get(p) == 0) {
+                            order.add(p);
+                        }
+                    }
+                    System.out.println("Ranking de pilotos:");
+                    System.out.printf("%4s %-10s %-20s %s %s\n","Pos","Nombre","Apellido","Puntos","Equipo");
+
+                    for (int i = 0; i < order.size(); i++) {
+                        piloto pil2 = order.get(i);
+
+                        System.out.printf("%2d.- %-10s %-20s %-6d %s\n", i + 1,pil2.getNamepiloto(), pil2.getSurnamepiloto(), pilypuntos.get(pil2),pil2.getEquipo().getName_equipo());
+                    }
+    }
+
 }
