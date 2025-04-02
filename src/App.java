@@ -13,7 +13,7 @@ public class App {
     public static void menu(connectionpool connpool) {
         try {
             Connection conn = connpool.getConnection();
-            System.out.println("1.Listar pilotos\n2.Listar pilotos por equipo\n3.Listar GPs\n4.Listar resultados de un piloto\n5.Listar resultados de un GP\n6.Ver ranking de pilotos");
+            System.out.println("1.Listar pilotos\n2.Listar pilotos por equipo\n3.Listar GPs\n4.Listar resultados de un piloto\n5.Listar resultados de un GP\n6.Ver ranking de pilotos\n7.Mostrar ranking por equipos");
             int op = Integer.parseInt(System.console().readLine());
             pilotosService ps = new pilotosService(conn);
             resultadoservice rs = new resultadoservice(conn);
@@ -111,6 +111,7 @@ public class App {
                         System.out.printf("%2d.- %s %s %d\n", i + 1,pil2.getNamepiloto(), pil2.getSurnamepiloto(), pilypuntos.get(pil2));
                     }
                     menu(connpool);
+                    
                 default:
                     System.out.println("Opción no válida. Intente de nuevo.");
             }
