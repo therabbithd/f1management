@@ -12,6 +12,7 @@ import pilotos.pilotosService;
 import resultado.resultado;
 import resultado.resultadoservice;
 import java.text.SimpleDateFormat;
+import java.util.Scanner;
 
 import equipos.*;
 import Motor.*;
@@ -23,6 +24,7 @@ public class App {
     public static void menu(connectionpool connpool) {
         try {
             Connection conn = connpool.getConnection();
+            limpiarconsola();
             System.out.println("1.Listar datos\n2.Listar pilotos por equipo\n3.Listar GPs\n4.Listar resultados de un piloto\n5.Listar motores\n6.Listar resultados de un GP\n7.Ver ranking de pilotos\n8.Mostrar ranking por equipos\n9.Mostrar ranking por motor\n10.insertar en una tabla n11.eliminar un campo\n12.actualizar un campo\n13.salir");
             int op = Integer.parseInt(System.console().readLine());
             pilotosService ps = new pilotosService(conn);
@@ -32,32 +34,54 @@ public class App {
             motorservice ms = new motorservice(conn);
             switch (op) {
                 case 1:
-                    System.out.println("1.pilotos\n2.Equipos\n3.Motor\n4.Resultados");
+                    System.out.print("\033[H\033[2J");  
+                    System.out.flush(); 
+                    System.out.println("1.pilotos\n2.Equipos\n3.Motor\n4.Resultados\n5.GPs");
                     int oplis = Integer.parseInt(System.console().readLine());
                     switch (oplis) {
                         case 1:
+                            limpiarconsola();
                             System.out.println("1.Listar todos los pilotos\n2.Listar los pilotos de un equipo");
                             int oppil = Integer.parseInt(System.console().readLine());
                             switch (oppil) {
                                 case 1:
                                     listarpilotos(ps);
-                                    menu(connpool);
+                                    esperarenter(connpool);
                                     break;
                                 case 2:
                                     listarpilporeq(ps);
+                                    esperarenter(connpool);
                                     menu(connpool);
-                                
+                                    break;
                                 default:
                                     throw new AssertionError();
                             }
-                            break;
+                            
                             case 2:
                             listarequipos(es);
-                            menu(connpool);
+                            esperarenter(connpool);
+                            break;
                             case 3:
                             listarmotor(ms);
-                            menu(connpool);
-
+                            esperarenter(connpool);
+                            break;
+                            case 4:
+                            limpiarconsola();
+                            System.out.println("1.Listar resultados de un gp\n2.Listar resultados de un piloto");
+                            int opres = Integer.parseInt(System.console().readLine());        
+                            switch (opres) {
+                                case 1:
+                                    listarresporgp(gps,rs);
+                                    esperarenter(connpool);
+                                case 2:
+                                    listarresporpil(ps,rs);
+                                    esperarenter(connpool);
+                                default:
+                                    break;
+                            }
+                            case 5:
+                            listargps(gps);
+                            esperarenter(connpool);
                             
                         default:
                             throw new AssertionError();
@@ -132,12 +156,15 @@ public class App {
          menu(connpool);
     }
     public static void listarpilotos(pilotosService ps) throws SQLException, ClassNotFoundException {
+        limpiarconsola();
         ArrayList<piloto> listapilotos = ps.requestAll();
                     for (piloto piloto : listapilotos) {
                         System.out.println(piloto.toString()+"\n");
                     }
-        }
+        
+    }
     public static void listarpilporeq(pilotosService ps) throws SQLException{
+       limpiarconsola(); 
        HashMap<equipo, ArrayList<piloto>> pilporeq = ps.requestAllByEquipo();
                     for (equipo eq : pilporeq.keySet()) {
                         System.out.println("Equipo: " + eq.getName_equipo()+"\n#####################");
@@ -149,6 +176,7 @@ public class App {
     }
 
     public static void listargps(GPservice gps) throws SQLException{
+        limpiarconsola();
         ArrayList<GP> listagp = new ArrayList<GP>();
         listagp = gps.requestAll();
         for (GP gp : listagp) {
@@ -156,6 +184,7 @@ public class App {
         }
     }
     public static void listarresporpil(pilotosService ps,resultadoservice rs) throws SQLException{
+        limpiarconsola();
         ArrayList<resultado> listares = new ArrayList<resultado>();
                     System.out.println("Ingrese el codigo del piloto");
                     int codpil = Integer.parseInt(System.console().readLine());
@@ -168,6 +197,7 @@ public class App {
                     }
     }
     public static void listarmotor(motorservice ms) throws SQLException{
+        limpiarconsola();
         ArrayList<motor> listmotor = new ArrayList<motor>();
                     listmotor = ms.requestAll();
                     for (motor mot : listmotor) {
@@ -175,6 +205,7 @@ public class App {
                     }
     }
     public static void listarresporgp(GPservice gps,resultadoservice rs) throws SQLException{
+        limpiarconsola();
         System.out.println("Ingrese el codigo del GP");
                     int codgp = Integer.parseInt(System.console().readLine());
                     GP gp = gps.requestById(codgp);
@@ -187,6 +218,7 @@ public class App {
                     }
     }
     public static void mostrarranking(pilotosService ps, resultadoservice rs) throws SQLException{
+        limpiarconsola();
         HashMap<piloto,Integer> pilypuntos = new HashMap<piloto,Integer>();
                     ArrayList<piloto> pils= new ArrayList<piloto>();
                     pils = ps.requestAll();
@@ -232,6 +264,7 @@ public class App {
                     }
     }
     public static void mostrarrankingeq(equiposervice es, resultadoservice rs) throws SQLException{
+        limpiarconsola();
         ArrayList<equipo> listaeq = new ArrayList<equipo>();
                 HashMap<equipo,Integer> eqypuntos = new HashMap<equipo,Integer>();
                 listaeq = es.requestAll();
@@ -276,6 +309,7 @@ public class App {
                 System.out.println("");
     }
     public static void mostrarrankingmot(motorservice ms, resultadoservice rs) throws SQLException{
+        limpiarconsola();
         ArrayList<motor> listamotor = new ArrayList<motor>();
                 HashMap<motor,Integer> motorypuntos = new HashMap<motor,Integer>();
                 listamotor = ms.requestAll();
@@ -320,6 +354,7 @@ public class App {
                 System.out.println("");
     }
     public static void ingresarequipo(equiposervice es, motorservice ms) throws SQLException {
+        limpiarconsola();
         System.out.println("pon el nombre del equipo");
         String nom = System.console().readLine();
         System.out.println("pon el codigo del motor");
@@ -329,12 +364,14 @@ public class App {
         es.create(EQ);
     }
     public static void ingresarmotor(motorservice ms) throws SQLException{
+        limpiarconsola();
         System.out.println("Ingresa el nombre del motor");
         String nom = System.console().readLine();
         motor mot = new motor(0, nom);
         ms.create(mot);
     }
     public static void ingresarpiloto(pilotosService ps,equiposervice es) throws SQLException{
+        limpiarconsola();
         SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");        System.out.println("Ingresa el nombre del piloto: ");
         String nom = System.console().readLine();
         System.out.println("Ingresa el apellido del piloto: ");
@@ -354,10 +391,20 @@ public class App {
         
         }
     public static void listarequipos(equiposervice es) throws SQLException{
+        limpiarconsola();
         ArrayList<equipo> equipos = es.requestAll();
         for(equipo e : equipos){
             System.out.println(e);
         }
+    }
+    public  static void limpiarconsola(){
+        System.out.print("\033[H\033[2J");  
+        System.out.flush(); 
+    }
+    public static void esperarenter(connectionpool connpool){
+        System.out.println("Pulsa enter para entrar en el menu");
+        System.console().readPassword();
+        menu(connpool);
     }
 }
 
