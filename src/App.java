@@ -1,31 +1,27 @@
-import java.security.spec.PSSParameterSpec;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import equipos.*;
 import Connection.connectionpool;
 import GP.GP;
 import GP.GPservice;
+import Motor.*;
+import equipos.*;
+import java.lang.reflect.Array;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import pilotos.piloto;
 import pilotos.pilotosService;
 import resultado.resultado;
 import resultado.resultadoservice;
-import java.text.SimpleDateFormat;
-import java.util.Scanner;
-
-import equipos.*;
-import Motor.*;
-import java.lang.reflect.Array;
-import java.text.ParseException;
-import java.time.LocalDate;
-import java.util.Date;
+import excepciones.*;
 public class App {
     public static void menu(connectionpool connpool) {
         try {
             Connection conn = connpool.getConnection();
             limpiarconsola();
-            System.out.println("1.Listar datos\n2.Listar pilotos por equipo\n3.Listar GPs\n4.Listar resultados de un piloto\n5.Listar motores\n6.Listar resultados de un GP\n7.Ver ranking de pilotos\n8.Mostrar ranking por equipos\n9.Mostrar ranking por motor\n10.insertar en una tabla n11.eliminar un campo\n12.actualizar un campo\n13.salir");
+            System.out.println("1.Listar datos\n2.Ver ranking\n3.insertar en una tabla \n11.eliminar un campo\n12.actualizar un campo\n13.salir");
             int op = Integer.parseInt(System.console().readLine());
             pilotosService ps = new pilotosService(conn);
             resultadoservice rs = new resultadoservice(conn);
@@ -51,7 +47,6 @@ public class App {
                                 case 2:
                                     listarpilporeq(ps);
                                     esperarenter(connpool);
-                                    menu(connpool);
                                     break;
                                 default:
                                     throw new AssertionError();
@@ -86,56 +81,67 @@ public class App {
                         default:
                             throw new AssertionError();
                     }
-                case 2:
-                    listarpilporeq(ps);
-                    menu(connpool);
-                case 3:
-                    listargps(gps);
-                    menu(connpool);
-                case 4:
-                    listarresporpil(ps,rs);
-                    menu(connpool);
-                case 5:
-                    listarmotor(ms);
-                    menu(connpool);
-                case 6:
-                    listarresporgp(gps,rs);
-                    menu(connpool);
-                case 7:
-                    mostrarranking(ps,rs);
-                    menu(connpool);
-                case 8:
-                mostrarrankingeq(es, rs);
                 
-                menu(connpool);
-                case 9:
-                mostrarrankingmot(ms,rs);
-                menu(connpool);
-                case 10:
+                case 2:
+                    limpiarconsola();
+                    System.out.println("1.Ranking de pilotos\n2.Ranking de equipos\n3.Ranking de motores");
+                    int opra = Integer.parseInt(System.console().readLine());
+                    switch (opra) {
+                        case 1:
+                            mostrarranking(ps, rs);
+                            esperarenter(connpool);
+                            break;
+                        case 2:
+                            mostrarrankingeq(es, rs);
+                            esperarenter(connpool);
+                            break;
+                        case 3:
+                            mostrarrankingmot(ms, rs);
+                            esperarenter(connpool);
+                            break;
+                        default:
+                            throw new AssertionError();
+                    }
+                
+                case 3:
+                    limpiarconsola();
                     System.out.println("1.Equipos\n2.Motor\n3.pilotos");
                     int opins = Integer.parseInt(System.console().readLine());
                     switch (opins) {
                         case 1:
                             ingresarequipo(es,ms);
-                            menu(connpool);
+                            esperarenter(connpool);
+                            break;
                         case 2:
                             ingresarmotor(ms);
-                            menu(connpool);
+                            esperarenter(connpool);
+                            break;
                         case 3:
                             ingresarpiloto(ps,es);
+                            esperarenter(connpool);
+                            break;
                         default:
                             throw new AssertionError();
                     }
-                case 11:
-                    System.out.print("Ingrese el codigo del motor :");
-                    int codmotor = Integer.parseInt(System.console().readLine());
-                    if(ms.delete(codmotor)){
-                        System.out.println("Motor eliminado correctamente");
+                case 4:
+                    limpiarconsola();
+                    System.out.print("1.Eliminar piloto\n2.Eliminar equipo\n3.Eliminar motor\n4.Eliminar GP\n5.Eliminar resultado\n6.Eliminar piloto de un equipo\n7.Eliminar motor de un equipo\n8.Eliminar GP de un piloto");
+                    int opeli = Integer.parseInt(System.console().readLine());
+                    switch (opeli) {
+                        case 1:
+                            eliminarpiloto(ps);
+                            esperarenter(connpool);
+                            break;
+                        case 2:
+                            eliminarequipo(es,ps);
+                            esperarenter(connpool);
+                            break;
+                        case 3:
+                            eliminargp(gps,rs);
+                            esperarenter(connpool);
+                        default:
+                            throw new AssertionError();
                     }
-                    else{
-                        System.out.println("No se ha podido eliminar el motor");
-                    }
-                    menu(connpool);
                 case 12:
                     
 
@@ -390,6 +396,12 @@ public class App {
 
         
         }
+    public static void eliminarpiloto(pilotosService ps) throws SQLException{
+        limpiarconsola();
+        System.out.println("Ingrese el codigo del piloto a eliminar");
+        int cod = Integer.parseInt(System.console().readLine());
+        ps.delete(cod);
+    }
     public static void listarequipos(equiposervice es) throws SQLException{
         limpiarconsola();
         ArrayList<equipo> equipos = es.requestAll();
@@ -406,5 +418,26 @@ public class App {
         System.console().readPassword();
         menu(connpool);
     }
+    public static void eliminarequipo(equiposervice es,pilotosService ps) throws SQLException{
+        limpiarconsola();
+        try {
+            System.out.println("Ingrese el codigo del equipo a eliminar");
+        int cod = Integer.parseInt(System.console().readLine());
+        ArrayList<piloto> listapil = ps.requestAll();
+        boolean encontrado = false;
+        for (piloto pil : listapil) {
+            if (pil.getEquipo().getCod_equipo() == cod) {
+                encontrado = true;
+                throw new nosepuedeeliminar();
+            }
+        }
+        
+        } catch (nosepuedeeliminar e) {
+            System.out.println("No se puede eliminar el equipo porque tiene pilotos asignados eliminalos o cambia de equipo a los pilotos");
+        }
+        
+        
+    }
+
 }
 
