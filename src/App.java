@@ -11,6 +11,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+
+import com.mysql.cj.x.protobuf.MysqlxDatatypes.ArrayOrBuilder;
+
 import pilotos.piloto;
 import pilotos.pilotosService;
 import resultado.resultado;
@@ -21,7 +24,7 @@ public class App {
         try {
             Connection conn = connpool.getConnection();
             limpiarconsola();
-            System.out.println("1.Listar datos\n2.Ver ranking\n3.insertar en una tabla \n11.eliminar un campo\n12.actualizar un campo\n13.salir");
+            System.out.println("1.Listar datos\n2.Ver ranking\n3.insertar en una tabla \n4.eliminar un campo\n5.actualizar un campo\n13.salir");
             int op = Integer.parseInt(System.console().readLine());
             pilotosService ps = new pilotosService(conn);
             resultadoservice rs = new resultadoservice(conn);
@@ -125,11 +128,11 @@ public class App {
                     }
                 case 4:
                     limpiarconsola();
-                    System.out.print("1.Eliminar piloto\n2.Eliminar equipo\n3.Eliminar motor\n4.Eliminar GP\n5.Eliminar resultado\n6.Eliminar piloto de un equipo\n7.Eliminar motor de un equipo\n8.Eliminar GP de un piloto");
+                    System.out.print("1.Eliminar piloto\n2.Eliminar equipo\n3.Eliminar motor\n4.Eliminar GP\n5.Eliminar resultado");
                     int opeli = Integer.parseInt(System.console().readLine());
                     switch (opeli) {
                         case 1:
-                            eliminarpiloto(ps);
+                            eliminarpil(ps,rs);
                             esperarenter(connpool);
                             break;
                         case 2:
@@ -137,13 +140,22 @@ public class App {
                             esperarenter(connpool);
                             break;
                         case 3:
-                            eliminargp(gps,rs);
+                            eliminarmotor(ms, es);
                             esperarenter(connpool);
+                            break;
+                        case 4:
+                            eliminargp(gps, rs);
+                            esperarenter(connpool);
+                            break;
+                        case 5:
+                            eliminarres(rs);
+                            esperarenter(connpool);
+                            break;
                         default:
                             throw new AssertionError();
                     }
-                case 12:
-                    
+                case 5:
+                
 
                 default:
                     System.out.println("Opción no válida. Intente de nuevo.");
@@ -378,30 +390,32 @@ public class App {
     }
     public static void ingresarpiloto(pilotosService ps,equiposervice es) throws SQLException{
         limpiarconsola();
-        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");        System.out.println("Ingresa el nombre del piloto: ");
+        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");        
+        System.out.println("Ingresa el nombre del piloto: ");
         String nom = System.console().readLine();
         System.out.println("Ingresa el apellido del piloto: ");
         String ape = System.console().readLine();
-        System.out.println("Ingresa su fecha de nacimiento (dd/MM/yyyy) ");
-        Date date = new Date();
-        try {
-             date =formato.parse(System.console().readLine());
-        } catch (ParseException e) {
-            System.out.println("el formato no es el correcto utiliza el formato dd/MM/yyyy ");
+        Date date = null;
+        boolean conseguido = false;
+        while (conseguido == false) {
+            try {
+                System.out.println("Ingresa su fecha de nacimiento (dd/MM/yyyy) ");
+                date =formato.parse(System.console().readLine());
+                conseguido = true;
+           } catch (ParseException e) {
+               System.out.println("el formato no es el correcto utiliza el formato dd/MM/yyyy ");
+               conseguido = false;
+           }
         }
+        
         System.out.println("introduce el codigo del equipo");
         int cod = Integer.parseInt(System.console().readLine());
         equipo eq = es.requestById(cod);
         piloto pil = new piloto(0, nom, ape, date, eq, cod);
-
+        ps.create(pil);
         
         }
-    public static void eliminarpiloto(pilotosService ps) throws SQLException{
-        limpiarconsola();
-        System.out.println("Ingrese el codigo del piloto a eliminar");
-        int cod = Integer.parseInt(System.console().readLine());
-        ps.delete(cod);
-    }
+   
     public static void listarequipos(equiposervice es) throws SQLException{
         limpiarconsola();
         ArrayList<equipo> equipos = es.requestAll();
@@ -420,6 +434,7 @@ public class App {
     }
     public static void eliminarequipo(equiposervice es,pilotosService ps) throws SQLException{
         limpiarconsola();
+        int numenc = 0;
         try {
             System.out.println("Ingrese el codigo del equipo a eliminar");
         int cod = Integer.parseInt(System.console().readLine());
@@ -428,15 +443,123 @@ public class App {
         for (piloto pil : listapil) {
             if (pil.getEquipo().getCod_equipo() == cod) {
                 encontrado = true;
-                throw new nosepuedeeliminar();
+                numenc++;
             }
         }
-        
+        if(encontrado){
+            throw new nosepuedeeliminar();
+        }
+        else{
+            System.out.print("Seguro que quieres eliminar (s/n)");
+                String opt = System.console().readLine();
+                if (opt.toLowerCase().equals("s")){
+                   es.delete(cod);
+                }
+        }
         } catch (nosepuedeeliminar e) {
-            System.out.println("No se puede eliminar el equipo porque tiene pilotos asignados eliminalos o cambia de equipo a los pilotos");
+            System.out.println("hay "+numenc+ " pilotos asignados a ese equipo eliminalos o cambialos de equipo");
         }
         
-        
+    }
+    public  static void eliminargp(GPservice gps,resultadoservice rs) throws SQLException{
+        limpiarconsola();
+        int numenc = 0;
+        try {
+            System.out.print("ingresa el codigo del gp que quieres eliminar: ");
+            int cod = Integer.parseInt(System.console().readLine());
+            ArrayList<resultado> resultados = rs.requestAll();
+            boolean encontrado = false;
+            
+            for(resultado r : resultados){
+                if(r.getGP().getCod_gp()==cod){
+                    encontrado = true;
+                    numenc++;
+                }
+            }
+            if(encontrado){
+                throw new nosepuedeeliminar();
+            }
+            else{
+                System.out.print("Seguro que quieres eliminar (s/n)");
+                String opt = System.console().readLine();
+                if (opt.toLowerCase().equals("s")){
+                    gps.delete(cod);
+                }
+            }
+
+        } catch (nosepuedeeliminar e) {
+            System.out.print("hay "+numenc+" resultados con ese gp eliminalos o asignalos a otro para poder eliminarlo");
+        }
+    }
+    public static void eliminarpil(pilotosService ps, resultadoservice rs) throws SQLException{
+        limpiarconsola();
+        int numenc = 0;
+        try {
+            System.out.println("ingresa el codigo del piloto que deseas eliminar");
+            int id = Integer.parseInt(System.console().readLine());
+            ArrayList<resultado> resultados = rs.requestAll();
+            boolean encontrado = false;
+            for(resultado r : resultados){
+                if(r.getPiloto().getCod_piloto()==id){
+                    encontrado = true;
+                    numenc++;
+                }
+            }
+            if(encontrado){
+                throw new nosepuedeeliminar();
+            }
+            else {
+                System.out.print("Seguro que quieres eliminar (s/n)");
+                String opt = System.console().readLine();
+                if (opt.toLowerCase().equals("s")){
+                    ps.delete(id);
+                }
+
+                
+                
+            }
+        } catch (nosepuedeeliminar e) {
+            System.out.println("hay "+numenc+" resultados de ese piloto elimina o actualiza esos resultados");;
+        }
+    }
+    public static void eliminarmotor(motorservice ms , equiposervice es) throws SQLException{
+        limpiarconsola();
+        int numenc = 0;
+        try {
+            System.out.println("ingresa el codigo del motor");
+            int id = Integer.parseInt(System.console().readLine());
+            ArrayList<equipo>  equipos = es.requestAll();
+            boolean encontrado = false;
+            for(equipo e :equipos){
+                if(e.getMotor().getCod_motor()==id){
+                    encontrado = true;
+                    numenc++;
+                }
+            }
+            if(encontrado){
+                throw new nosepuedeeliminar();
+            }
+            else{
+                System.out.print("Seguro que quieres eliminar (s/n)");
+                String opt = System.console().readLine();
+                if (opt.toLowerCase().equals("s")){
+                   ms.delete(id);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("hay "+ numenc+" equipos asignados a ese motor borralos o actualizalos antes de eliminar el motor ");
+        }
+    }
+    public static void eliminarres(resultadoservice rs) throws SQLException{
+        limpiarconsola();
+        System.out.print("ingresa el codigo de gp: ");
+        int id = Integer.parseInt(System.console().readLine());
+        limpiarconsola();
+        System.out.print("Seguro que quieres eliminar (s/n)");
+                String opt = System.console().readLine();
+                if (opt.toLowerCase().equals("s")){
+                    rs.delete(id);
+               }
     }
 
 }

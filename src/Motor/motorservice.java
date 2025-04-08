@@ -51,7 +51,9 @@ public class motorservice implements CRUD.CRUDSERVICE<motor> {
     public void create(motor model) throws SQLException {
         Statement stmt = null;
         stmt = conn.createStatement();
-        stmt.executeUpdate("INSERT INTO motor (NomMot) VALUES ('" + model.getName_motor() + "')");
+        
+        String consulta = String.format("INSERT INTO motor (NomMot) VALUES ('%s')", model.getName_motor());
+        stmt.executeUpdate(consulta);
         stmt.close();
     }
 

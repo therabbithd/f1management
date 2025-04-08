@@ -59,6 +59,7 @@ public class equiposervice  implements CRUD.CRUDSERVICE<equipo>{
     public void create(equipo model) throws SQLException {
         Statement stmt = null;
         stmt = conn.createStatement();
+        String consulta= String.format("INSERT INTO equipo (NomEq, CodMot) VALUES ('%s',%d)",model.getName_equipo(),model.getMotor().getCod_motor());
         stmt.executeUpdate("INSERT INTO equipo (NomEq, CodMot) VALUES ('" + model.getName_equipo() + "', " + model.getMotor().getCod_motor() + ")");
         stmt.close();
     }

@@ -1,9 +1,12 @@
 package pilotos;
 
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.sql.ResultSet;
@@ -98,7 +101,11 @@ public class pilotosService implements CRUD.CRUDSERVICE<piloto>{
     public void create(piloto model) throws SQLException {
         Statement stmt = null;
         stmt = con.createStatement();
-        stmt.executeUpdate("INSERT INTO pilotos (NomPil, Ape1Pil, FechaNacimiento, CodEq) VALUES ('" + model.getNamepiloto() + "','" + model.getSurnamepiloto() + "','" + model.getFecnac() + "'," + model.getEquipo().getCod_equipo() + ")");
+        Date fec = model.getFecnac();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String fecha = format.format(fec);
+        String consulta = String.format("INSERT INTO pilotos (NomPil, Ape1Pil, FechaNacimiento, CodEq) VALUES ('%s','%s','%s',%s)", model.getNamepiloto(),model.getSurnamepiloto(),fecha,model.getEquipo().getCod_equipo());
+        stmt.executeUpdate(consulta);
         stmt.close();
     }
     @Override

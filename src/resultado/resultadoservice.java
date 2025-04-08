@@ -67,7 +67,8 @@ public class resultadoservice implements CRUDSERVICE<resultado>{
     @Override
     public void create(resultado model) throws SQLException {
         Statement stmt = conn.createStatement();
-        stmt.executeQuery("INSERT INTO resultado(CodGP,CodPil,pos) VALUES ("+model.getGP().getCod_gp()+","+model.getPiloto().getCod_piloto()+","+model.getPos()+");");
+        String consulta = String.format("INSERT INTO resultado(CodGP,CodPil,pos) VALUES (%d,%d,%d)",model.getGP().getCod_gp(),model.getPiloto().getCod_piloto(),model.getPos());
+        stmt.executeQuery(consulta);
         stmt.close();
 
     }
