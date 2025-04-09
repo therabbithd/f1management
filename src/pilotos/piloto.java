@@ -48,8 +48,9 @@ public class piloto {
     public void setEquipo(equipos.equipo equipo) {
         this.equipo = equipo;
     }
-    public String imprimirnomycod(){
-        return this.namepiloto+" "+this.surnamepiloto+":"+this.cod_piloto; 
+    public String imprimirnomycod(int max){
+        String nomcom = this.namepiloto+" "+this.surnamepiloto;
+        return String.format("%"+max+"s:%d",nomcom,this.cod_piloto);
     }
     @Override
     public String toString() {

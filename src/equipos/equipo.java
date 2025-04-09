@@ -29,8 +29,8 @@ public class equipo {
     public void setMotor(Motor.motor motor) {
         this.motor = motor;
     }
-    public String imprimirnomycod(){
-       return this.name_equipo+":"+this.cod_equipo;
+    public String imprimirnomycod(int max){
+       return String.format("%"+max+"s:%d", this.name_equipo,this.cod_equipo);
     }
 
     @Override

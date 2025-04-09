@@ -37,8 +37,8 @@ public class GP {
     public void setNum_gp(int num_gp) {
         this.num_gp = num_gp;
     }
-    public String imprimirnomycod(){
-        return this.name_gp+";"+this.cod_gp;
+    public String imprimirnomycod(int max){
+        return String.format("%"+max+"s:%d", this.name_gp,this.cod_gp);
     }
     @Override
     public String toString() {

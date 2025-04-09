@@ -568,17 +568,64 @@ public class App {
     public static void insertarres(resultadoservice rs,GPservice gps,pilotosService ps) throws SQLException{
         limpiarconsola();
         System.out.print("pon el codigo del gp: ");
-        int codgp = Integer.parseInt(System.console().readLine());
+        int codgp = perircodgp(gps);
         GP gp = gps.requestById(codgp);
         System.out.print("pon el codigo del piloto: ");
-        int codpil = Integer.parseInt(System.console().readLine());
+        int codpil = pedircodpil(ps);
         piloto pil = ps.requestById(codpil);
         System.out.print("pon la posicion: ");
         int pos = Integer.parseInt(System.console().readLine());
         resultado res = new resultado(pil, pos, gp, pos);
         rs.create(res);
     }
-    
+    public static int perircodgp(GPservice gps) throws SQLException{
+        
+        ArrayList<GP> Gps = gps.requestAll();
+        int max=0;
+        for(GP g: Gps){
+           if (g.getName_gp().length()>max){
+                max=g.getName_gp().length();
+           }
+        }
+        System.out.printf("%"+max+"s:%s \n","nombre","codigo");
+        for(GP g: Gps){
+            System.out.println(g.imprimirnomycod(max));
+        }
+        System.out.print("pon el codigo del gp: ");
+        return Integer.parseInt(System.console().readLine());
+    }
+    public static int pedircodpil(pilotosService ps) throws SQLException{
+        System.out.print("pon el codigo del pil ");
+        ArrayList<piloto> pils = ps.requestAll();
+        int max = 0;
+        for(piloto pil:pils){
+            String nomcom = pil.getNamepiloto()+" "+pil.getSurnamepiloto();
+            if(nomcom.length()>max){
+                max=nomcom.length();
+            }
+        }
+        System.out.printf("%"+max+"s:%s","nombre","codigo");
+        for(piloto pil:pils){
+            pil.imprimirnomycod(max);
+        }
+        return Integer.parseInt(System.console().readLine());
+    }
+    public static  int pedircodeq(equiposervice es) throws SQLException{
+        System.out.print("pon el codigo del eq ");
+        ArrayList<equipo> eqs = es.requestAll();
+        int max = 0;
+        for(equipo eq:eqs){
+            String nom = eq.getName_equipo();
+            if(nom.length()>max){
+                max=nom.length();
+            }
+        }
+        System.out.printf("%"+max+"s:%s","nombre","codigo");
+        for(equipo eq:eqs){
+            eq.imprimirnomycod(max);
+        }
+        return Integer.parseInt(System.console().readLine());
+    }
 
 }
 
