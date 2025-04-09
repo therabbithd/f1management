@@ -24,7 +24,7 @@ public class App {
         try {
             Connection conn = connpool.getConnection();
             limpiarconsola();
-            System.out.println("1.Listar datos\n2.Ver ranking\n3.insertar en una tabla \n4.eliminar un campo\n5.actualizar un campo\n13.salir");
+            System.out.println("1.Listar datos\n2.Ver ranking\n3.insertar en una tabla \n4.eliminar un campo\n5.actualizar un campo\n6.salir");
             int op = Integer.parseInt(System.console().readLine());
             pilotosService ps = new pilotosService(conn);
             resultadoservice rs = new resultadoservice(conn);
@@ -159,7 +159,7 @@ public class App {
                             throw new AssertionError();
                     }
                 case 5:
-                System.out.println("null");
+                System.out.println("1.piloto\n2.equipo\n3.motor")
 
                 default:
                     System.out.println("Opción no válida. Intente de nuevo.");
