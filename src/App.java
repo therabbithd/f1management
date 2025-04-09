@@ -152,7 +152,7 @@ public class App {
                             esperarenter(connpool);
                             break;
                         case 5:
-                            eliminarres(rs);
+                            eliminarres(rs,gps);
                             esperarenter(connpool);
                             break;
                         default:
@@ -208,36 +208,35 @@ public class App {
     public static void listarresporpil(pilotosService ps,resultadoservice rs) throws SQLException{
         limpiarconsola();
         ArrayList<resultado> listares = new ArrayList<resultado>();
-                    System.out.println("Ingrese el codigo del piloto");
-                    int codpil = Integer.parseInt(System.console().readLine());
-                    piloto pil = ps.requestById(codpil);
-                    listares = rs.requestbypil(pil);
-                    System.out.println("Resultados del piloto " + pil.getNamepiloto() + " " + pil.getSurnamepiloto() + ":");
-                    for (resultado res : listares) {
-                        System.out.println("resultado en "+res.getGP().getName_gp()+":");
-                        System.out.println(res.toString());
-                    }
+        int codpil = pedircodpil(ps);
+        piloto pil = ps.requestById(codpil);
+        listares = rs.requestbypil(pil);
+        System.out.println("Resultados del piloto " + pil.getNamepiloto() + " " + pil.getSurnamepiloto() + ":");
+        for (resultado res : listares) {
+            System.out.println("resultado en "+res.getGP().getName_gp()+":");
+            System.out.println(res.toString());
+        }
     }
     public static void listarmotor(motorservice ms) throws SQLException{
         limpiarconsola();
         ArrayList<motor> listmotor = new ArrayList<motor>();
-                    listmotor = ms.requestAll();
-                    for (motor mot : listmotor) {
+        listmotor = ms.requestAll();
+        for (motor mot : listmotor) {
                         System.out.println(mot.toString()+"\n");
-                    }
+        }
     }
     public static void listarresporgp(GPservice gps,resultadoservice rs) throws SQLException{
         limpiarconsola();
-        System.out.println("Ingrese el codigo del GP");
-                    int codgp = Integer.parseInt(System.console().readLine());
-                    GP gp = gps.requestById(codgp);
-                    ArrayList<resultado> listares2 = new ArrayList<resultado>();
-                    listares2 = rs.requestByGP(gp);
-                    System.out.println("Resultados del GP " + gp.getName_gp() + ":");
-                    System.out.printf("%4s %-10s %-20s %s %s\n","Pos","Nombre","Apellido","Puntos","Equipo");
-                    for (resultado res : listares2) {
-                        System.out.println(res.toString());
-                    }
+        
+        int codgp = perircodgp(gps);
+        GP gp = gps.requestById(codgp);
+        ArrayList<resultado> listares2 = new ArrayList<resultado>();
+        listares2 = rs.requestByGP(gp);
+        System.out.println("Resultados del GP " + gp.getName_gp() + ":");
+        System.out.printf("%4s %-10s %-20s %s %s\n","Pos","Nombre","Apellido","Puntos","Equipo");
+        for (resultado res : listares2) {
+            System.out.println(res.toString());
+        }
     }
     public static void mostrarranking(pilotosService ps, resultadoservice rs) throws SQLException{
         limpiarconsola();
@@ -379,8 +378,7 @@ public class App {
         limpiarconsola();
         System.out.println("pon el nombre del equipo");
         String nom = System.console().readLine();
-        System.out.println("pon el codigo del motor");
-        int cod = Integer.parseInt(System.console().readLine());
+        int cod = pedircodmot(ms);
         motor mot = ms.requestById(cod);
         equipo EQ = new equipo(0, nom, mot);
         es.create(EQ);
@@ -412,8 +410,8 @@ public class App {
            }
         }
         
-        System.out.println("introduce el codigo del equipo");
-        int cod = Integer.parseInt(System.console().readLine());
+       
+        int cod = pedircodeq(es);
         equipo eq = es.requestById(cod);
         piloto pil = new piloto(0, nom, ape, date, eq, cod);
         ps.create(pil);
@@ -440,8 +438,7 @@ public class App {
         limpiarconsola();
         int numenc = 0;
         try {
-            System.out.println("Ingrese el codigo del equipo a eliminar");
-        int cod = Integer.parseInt(System.console().readLine());
+        int cod = pedircodeq(es);
         ArrayList<piloto> listapil = ps.requestAll();
         boolean encontrado = false;
         for (piloto pil : listapil) {
@@ -469,8 +466,7 @@ public class App {
         limpiarconsola();
         int numenc = 0;
         try {
-            System.out.print("ingresa el codigo del gp que quieres eliminar: ");
-            int cod = Integer.parseInt(System.console().readLine());
+            int cod = perircodgp(gps);
             ArrayList<resultado> resultados = rs.requestAll();
             boolean encontrado = false;
             
@@ -500,7 +496,7 @@ public class App {
         int numenc = 0;
         try {
             System.out.println("ingresa el codigo del piloto que deseas eliminar");
-            int id = Integer.parseInt(System.console().readLine());
+            int id = pedircodpil(ps);
             ArrayList<resultado> resultados = rs.requestAll();
             boolean encontrado = false;
             for(resultado r : resultados){
@@ -531,7 +527,7 @@ public class App {
         int numenc = 0;
         try {
             System.out.println("ingresa el codigo del motor");
-            int id = Integer.parseInt(System.console().readLine());
+            int id = pedircodmot(ms);
             ArrayList<equipo>  equipos = es.requestAll();
             boolean encontrado = false;
             for(equipo e :equipos){
@@ -554,10 +550,10 @@ public class App {
             System.out.println("hay "+ numenc+" equipos asignados a ese motor borralos o actualizalos antes de eliminar el motor ");
         }
     }
-    public static void eliminarres(resultadoservice rs) throws SQLException{
+    public static void eliminarres(resultadoservice rs,GPservice gps) throws SQLException{
         limpiarconsola();
         System.out.print("ingresa el codigo de gp: ");
-        int id = Integer.parseInt(System.console().readLine());
+        int id = perircodgp(gps);
         limpiarconsola();
         System.out.print("Seguro que quieres eliminar (s/n)");
                 String opt = System.console().readLine();
@@ -592,11 +588,11 @@ public class App {
             case "s":
                 return cod;
             case "n":
-                return 0;
+                return perircodgp(gps);
             default:
-                break;
+                return 0;
         }
-        return 0;
+        
     }
 
         
@@ -610,7 +606,7 @@ public class App {
             case "s":
                 return cod;
             case "n":
-                return 0;
+                return pedircodpil(ps);
             default:
                 return 0;
         }
@@ -619,16 +615,17 @@ public class App {
         System.out.print("pon el codigo del eq ");
         int cod = Integer.parseInt(System.console().readLine());
         equipo eq = es.requestById(cod);
-        System.out.println("¿Seguro que quieres poner "+eq.getName_equipo()+"?(s/n)");
+        System.out.println("¿Seguro que quieres poner "+eq.getName_equipo()+"?(s/n/e)");
         String opt = System.console().readLine().toLowerCase();
         switch (opt) {
             case "s":
                 return cod;
             case "n":
-                return 0;
+                return pedircodeq(es);
             default:
                 return 0;
         }
+        
         
     }
     public static int pedircodmot(motorservice ms) throws SQLException{
@@ -641,10 +638,11 @@ public class App {
             case "s":
             return cod;
             case "n":
-            pedircodmot(ms);
-            break;
+                return pedircodmot(ms);
+            case "e":
+                return 0;
             default:
-            break;
+                return 0;
         }
         
     }
