@@ -108,7 +108,7 @@ public class App {
                 
                 case 3:
                     limpiarconsola();
-                    System.out.println("1.Equipos\n2.Motor\n3.pilotos");
+                    System.out.println("1.Equipos\n2.Motor\n3.pilotos\n4.resultados");
                     int opins = Integer.parseInt(System.console().readLine());
                     switch (opins) {
                         case 1:
@@ -121,6 +121,10 @@ public class App {
                             break;
                         case 3:
                             ingresarpiloto(ps,es);
+                            esperarenter(connpool);
+                            break;
+                        case 4:
+                            insertarres(rs, gps, ps);
                             esperarenter(connpool);
                             break;
                         default:
@@ -155,7 +159,7 @@ public class App {
                             throw new AssertionError();
                     }
                 case 5:
-                
+                System.out.println("null");
 
                 default:
                     System.out.println("Opción no válida. Intente de nuevo.");
@@ -561,6 +565,20 @@ public class App {
                     rs.delete(id);
                }
     }
+    public static void insertarres(resultadoservice rs,GPservice gps,pilotosService ps) throws SQLException{
+        limpiarconsola();
+        System.out.print("pon el codigo del gp: ");
+        int codgp = Integer.parseInt(System.console().readLine());
+        GP gp = gps.requestById(codgp);
+        System.out.print("pon el codigo del piloto: ");
+        int codpil = Integer.parseInt(System.console().readLine());
+        piloto pil = ps.requestById(codpil);
+        System.out.print("pon la posicion: ");
+        int pos = Integer.parseInt(System.console().readLine());
+        resultado res = new resultado(pil, pos, gp, pos);
+        rs.create(res);
+    }
+    
 
 }
 

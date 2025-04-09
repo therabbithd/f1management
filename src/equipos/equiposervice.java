@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
 import Motor.motor;
 import Motor.motorservice;
 
@@ -81,6 +80,7 @@ public class equiposervice  implements CRUD.CRUDSERVICE<equipo>{
         stmt.close();
         return result;
     }
+  
     
     
     

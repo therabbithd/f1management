@@ -37,6 +37,9 @@ public class GP {
     public void setNum_gp(int num_gp) {
         this.num_gp = num_gp;
     }
+    public String imprimirnomycod(){
+        return this.name_gp+";"+this.cod_gp;
+    }
     @Override
     public String toString() {
         return "GP: " + name_gp + "\nfecha: " + fec_gp + "\ncod GP: " + cod_gp + "\nnumero GP: " + num_gp;

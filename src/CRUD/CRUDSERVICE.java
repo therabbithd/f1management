@@ -47,5 +47,6 @@ public interface CRUDSERVICE<T> {
      * @throws SQLException
      */
     public boolean delete(long id) throws SQLException;
+    
 }
 

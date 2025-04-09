@@ -48,6 +48,9 @@ public class piloto {
     public void setEquipo(equipos.equipo equipo) {
         this.equipo = equipo;
     }
+    public String imprimirnomycod(){
+        return this.namepiloto+" "+this.surnamepiloto+":"+this.cod_piloto; 
+    }
     @Override
     public String toString() {
         return "piloto: " + namepiloto + " "+ surnamepiloto + "\nfecha de nacimiento: " + fecnac + "\nequipo: " + equipo.getName_equipo() + "\ncod piloto: " + cod_piloto+"\nedad: " + edad;
