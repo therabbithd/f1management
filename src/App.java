@@ -569,31 +569,37 @@ public class App {
         limpiarconsola();
         System.out.println("pon el codigo del gp: ");
         int codgp = perircodgp(gps);
-        GP gp = gps.requestById(codgp);
-        System.out.print("pon el codigo del piloto: ");
-        int codpil = pedircodpil(ps);
-        piloto pil = ps.requestById(codpil);
-        System.out.print("pon la posicion: ");
-        int pos = Integer.parseInt(System.console().readLine());
-        resultado res = new resultado(pil, pos, gp, pos);
-        rs.create(res);
+        if(codgp != 0){
+            GP gp = gps.requestById(codgp);
+            System.out.print("pon el codigo del piloto: ");
+            int codpil = pedircodpil(ps);
+            piloto pil = ps.requestById(codpil);
+            System.out.print("pon la posicion: ");
+            int pos = Integer.parseInt(System.console().readLine());
+            resultado res = new resultado(pil, pos, gp, pos);
+            rs.create(res);
+        }
+        
     }
     public static int perircodgp(GPservice gps) throws SQLException{
         
         ArrayList<GP> Gps = gps.requestAll();
-        int max=0;
-        for(GP g: Gps){
-           if (g.getName_gp().length()>max){
-                max=g.getName_gp().length();
-           }
+        int cod = Integer.parseInt(System.console().readLine());
+        GP gp = gps.requestById(cod);
+        System.out.println("¿seguro que quieres poner "+gp.getName_gp()+"?(s/n)");
+        String opt = System.console().readLine().toLowerCase();
+        switch (opt) {
+            case "s":
+                return cod;
+            case "n":
+                return 0;
+            default:
+                break;
         }
-        System.out.printf("%"+max+"s:%s \n","nombre","codigo");
-        for(GP g: Gps){
-            System.out.println(g.imprimirnomycod(max));
-        }
-        System.out.print("pon el codigo del gp: ");
-        return Integer.parseInt(System.console().readLine());
+        return 0;
     }
+
+        
     public static int pedircodpil(pilotosService ps) throws SQLException{
         
         ArrayList<piloto> pils = ps.requestAll();

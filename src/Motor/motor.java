@@ -19,9 +19,7 @@ public class motor {
     public void setName_motor(String name_motor) {
         this.name_motor = name_motor;
     }
-    public String imprimirnomycod(){
-        return this.name_motor+":"+this.cod_motor;
-    }
+   
     @Override
     public String toString() {
         return "Nombre: "+name_motor+"\nCodigo: "+cod_motor;
