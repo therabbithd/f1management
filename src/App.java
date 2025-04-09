@@ -631,5 +631,22 @@ public class App {
         }
         
     }
+    public static int pedircodmot(motorservice ms) throws SQLException{
+        System.out.print("pon el codigo del motor");
+        int cod = Integer.parseInt(System.console().readLine());
+        motor mot = ms.requestById(cod);
+        System.out.println("¿seguro que quieres poner "+mot.getName_motor()+"?(s/n)");
+        String opt = System.console().readLine().toLowerCase();
+        switch (opt) {
+            case "s":
+            return cod;
+            case "n":
+            pedircodmot(ms);
+            break;
+            default:
+            break;
+        }
+        
+    }
 }
 
