@@ -132,7 +132,7 @@ public class App {
                     }
                 case 4:
                     limpiarconsola();
-                    System.out.print("1.Eliminar piloto\n2.Eliminar equipo\n3.Eliminar motor\n4.Eliminar GP\n5.Eliminar resultado");
+                    System.out.println("1.Eliminar piloto\n2.Eliminar equipo\n3.Eliminar motor\n4.Eliminar GP\n5.Eliminar resultado");
                     int opeli = Integer.parseInt(System.console().readLine());
                     switch (opeli) {
                         case 1:
@@ -495,7 +495,6 @@ public class App {
         limpiarconsola();
         int numenc = 0;
         try {
-            System.out.println("ingresa el codigo del piloto que deseas eliminar");
             int id = pedircodpil(ps);
             ArrayList<resultado> resultados = rs.requestAll();
             boolean encontrado = false;
@@ -526,7 +525,6 @@ public class App {
         limpiarconsola();
         int numenc = 0;
         try {
-            System.out.println("ingresa el codigo del motor");
             int id = pedircodmot(ms);
             ArrayList<equipo>  equipos = es.requestAll();
             boolean encontrado = false;
@@ -563,7 +561,6 @@ public class App {
     }
     public static void insertarres(resultadoservice rs,GPservice gps,pilotosService ps) throws SQLException{
         limpiarconsola();
-        System.out.println("pon el codigo del gp: ");
         int codgp = perircodgp(gps);
         if(codgp != 0){
             GP gp = gps.requestById(codgp);
@@ -578,8 +575,7 @@ public class App {
         
     }
     public static int perircodgp(GPservice gps) throws SQLException{
-        
-        ArrayList<GP> Gps = gps.requestAll();
+        System.out.println("pon el codigo del gp");
         int cod = Integer.parseInt(System.console().readLine());
         GP gp = gps.requestById(cod);
         System.out.println("¿seguro que quieres poner "+gp.getName_gp()+"?(s/n)");
@@ -597,7 +593,7 @@ public class App {
 
         
     public static int pedircodpil(pilotosService ps) throws SQLException{
-        ArrayList<piloto> pils = ps.requestAll();
+        System.out.print("pon el codigo del piloto");
         int cod = Integer.parseInt(System.console().readLine());
         piloto pil = ps.requestById(cod);
         System.out.println("¿Seguro que quieres poner "+pil.getNamepiloto() +" "+pil.getSurnamepiloto()+"?(s/n)");
@@ -612,7 +608,7 @@ public class App {
         }
     }
     public static  int pedircodeq(equiposervice es) throws SQLException{
-        System.out.print("pon el codigo del eq ");
+        System.out.print("pon el codigo del equipo ");
         int cod = Integer.parseInt(System.console().readLine());
         equipo eq = es.requestById(cod);
         System.out.println("¿Seguro que quieres poner "+eq.getName_equipo()+"?(s/n/e)");
