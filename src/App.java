@@ -601,37 +601,35 @@ public class App {
 
         
     public static int pedircodpil(pilotosService ps) throws SQLException{
-        
         ArrayList<piloto> pils = ps.requestAll();
-        int max = 0;
-        for(piloto pil:pils){
-            String nomcom = pil.getNamepiloto()+" "+pil.getSurnamepiloto();
-            if(nomcom.length()>max){
-                max=nomcom.length();
-            }
+        int cod = Integer.parseInt(System.console().readLine());
+        piloto pil = ps.requestById(cod);
+        System.out.println("¿Seguro que quieres poner "+pil.getNamepiloto() +" "+pil.getSurnamepiloto()+"?(s/n)");
+        String opt = System.console().readLine().toLowerCase();
+        switch (opt) {
+            case "s":
+                return cod;
+            case "n":
+                return 0;
+            default:
+                return 0;
         }
-        System.out.printf("%"+max+"s:%s","nombre","codigo");
-        for(piloto pil:pils){
-            pil.imprimirnomycod(max);
-        }
-        return Integer.parseInt(System.console().readLine());
     }
     public static  int pedircodeq(equiposervice es) throws SQLException{
         System.out.print("pon el codigo del eq ");
-        ArrayList<equipo> eqs = es.requestAll();
-        int max = 0;
-        for(equipo eq:eqs){
-            String nom = eq.getName_equipo();
-            if(nom.length()>max){
-                max=nom.length();
-            }
+        int cod = Integer.parseInt(System.console().readLine());
+        equipo eq = es.requestById(cod);
+        System.out.println("¿Seguro que quieres poner "+eq.getName_equipo()+"?(s/n)");
+        String opt = System.console().readLine().toLowerCase();
+        switch (opt) {
+            case "s":
+                return cod;
+            case "n":
+                return 0;
+            default:
+                return 0;
         }
-        System.out.printf("%"+max+"s:%s","nombre","codigo");
-        for(equipo eq:eqs){
-            eq.imprimirnomycod(max);
-        }
-        return Integer.parseInt(System.console().readLine());
+        
     }
-
 }
 
