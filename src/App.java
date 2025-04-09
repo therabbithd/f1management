@@ -567,7 +567,7 @@ public class App {
     }
     public static void insertarres(resultadoservice rs,GPservice gps,pilotosService ps) throws SQLException{
         limpiarconsola();
-        System.out.print("pon el codigo del gp: ");
+        System.out.println("pon el codigo del gp: ");
         int codgp = perircodgp(gps);
         GP gp = gps.requestById(codgp);
         System.out.print("pon el codigo del piloto: ");
@@ -595,7 +595,7 @@ public class App {
         return Integer.parseInt(System.console().readLine());
     }
     public static int pedircodpil(pilotosService ps) throws SQLException{
-        System.out.print("pon el codigo del pil ");
+        
         ArrayList<piloto> pils = ps.requestAll();
         int max = 0;
         for(piloto pil:pils){
