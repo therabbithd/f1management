@@ -159,8 +159,21 @@ public class App {
                             throw new AssertionError();
                     }
                 case 5:
-                System.out.println("1.piloto\n2.equipo\n3.motor")
-
+                System.out.println("1.piloto\n2.equipo\n3.motor");
+                int op5 = Integer.parseInt(System.console().readLine());
+                switch (op5) {
+                    case 1:
+                        actualizarpiloto(ps,es);
+                        esperarenter(connpool);
+                    case 2:
+                        actualizarequipo(es, ms);
+                        esperarenter(connpool);
+                    case 3:
+                        actualizarmotor(ms);
+                        esperarenter(connpool);
+                    
+                    }
+                break;
                 default:
                     System.out.println("Opción no válida. Intente de nuevo.");
             }
@@ -379,9 +392,12 @@ public class App {
         System.out.println("pon el nombre del equipo");
         String nom = System.console().readLine();
         int cod = pedircodmot(ms);
-        motor mot = ms.requestById(cod);
-        equipo EQ = new equipo(0, nom, mot);
-        es.create(EQ);
+        if(cod != 0){
+            motor mot = ms.requestById(cod);
+            equipo EQ = new equipo(0, nom, mot);
+            es.create(EQ);
+        }
+        
     }
     public static void ingresarmotor(motorservice ms) throws SQLException{
         limpiarconsola();
@@ -412,9 +428,12 @@ public class App {
         
        
         int cod = pedircodeq(es);
-        equipo eq = es.requestById(cod);
-        piloto pil = new piloto(0, nom, ape, date, eq, cod);
-        ps.create(pil);
+        if (cod != 0){
+            equipo eq = es.requestById(cod);
+            piloto pil = new piloto(0, nom, ape, date, eq, cod);
+            ps.create(pil);
+        }
+        
         
         }
    
@@ -566,11 +585,15 @@ public class App {
             GP gp = gps.requestById(codgp);
             System.out.print("pon el codigo del piloto: ");
             int codpil = pedircodpil(ps);
-            piloto pil = ps.requestById(codpil);
-            System.out.print("pon la posicion: ");
-            int pos = Integer.parseInt(System.console().readLine());
-            resultado res = new resultado(pil, pos, gp, pos);
-            rs.create(res);
+            if(codpil != 0){
+                piloto pil = ps.requestById(codpil);
+                System.out.print("pon la posicion: ");
+                int pos = Integer.parseInt(System.console().readLine());
+                resultado res = new resultado(pil, pos, gp, pos);
+                rs.create(res);
+            }
+           
+            
         }
         
     }
@@ -578,7 +601,7 @@ public class App {
         System.out.println("pon el codigo del gp");
         int cod = Integer.parseInt(System.console().readLine());
         GP gp = gps.requestById(cod);
-        System.out.println("¿seguro que quieres poner "+gp.getName_gp()+"?(s/n)");
+        System.out.println("¿seguro que quieres poner "+gp.getName_gp()+"?(s/n/e)");
         String opt = System.console().readLine().toLowerCase();
         switch (opt) {
             case "s":
@@ -593,7 +616,7 @@ public class App {
 
         
     public static int pedircodpil(pilotosService ps) throws SQLException{
-        System.out.print("pon el codigo del piloto");
+        System.out.print("pon el codigo del piloto: ");
         int cod = Integer.parseInt(System.console().readLine());
         piloto pil = ps.requestById(cod);
         System.out.println("¿Seguro que quieres poner "+pil.getNamepiloto() +" "+pil.getSurnamepiloto()+"?(s/n)");
@@ -608,7 +631,7 @@ public class App {
         }
     }
     public static  int pedircodeq(equiposervice es) throws SQLException{
-        System.out.print("pon el codigo del equipo ");
+        System.out.print("pon el codigo del equipo: ");
         int cod = Integer.parseInt(System.console().readLine());
         equipo eq = es.requestById(cod);
         System.out.println("¿Seguro que quieres poner "+eq.getName_equipo()+"?(s/n/e)");
@@ -625,22 +648,68 @@ public class App {
         
     }
     public static int pedircodmot(motorservice ms) throws SQLException{
-        System.out.print("pon el codigo del motor");
+        System.out.print("pon el codigo del motor: ");
         int cod = Integer.parseInt(System.console().readLine());
         motor mot = ms.requestById(cod);
-        System.out.println("¿seguro que quieres poner "+mot.getName_motor()+"?(s/n)");
+        System.out.println("¿seguro que quieres poner "+mot.getName_motor()+"?(s/n/e)");
         String opt = System.console().readLine().toLowerCase();
         switch (opt) {
             case "s":
             return cod;
             case "n":
                 return pedircodmot(ms);
-            case "e":
-                return 0;
             default:
                 return 0;
         }
         
+    }
+    public static void actualizarequipo(equiposervice es,motorservice ms) throws SQLException{
+        limpiarconsola();
+        int cod = pedircodeq(es);
+        equipo e = es.requestById(cod);
+        System.out.print("Pon el nuevo nombre del equipo(si lo pones vacio deja el anterior) ");
+        String nom = System.console().readLine();
+        if(!nom.equals("")){
+            e.setName_equipo(nom);
+        }
+        int codmot = pedircodmot(ms);
+        if(codmot != 0){
+            motor mot = ms.requestById(codmot);
+            e.setMotor(mot);
+        }
+        es.update(e);
+    }
+    public static void actualizarpiloto(pilotosService ps,equiposervice es) throws SQLException{
+        limpiarconsola();
+        int codpil = pedircodpil(ps);
+        piloto pil = ps.requestById(codpil);
+        System.out.print("Pon el nuevo nombre del piloto(si lo pones vacio deja el anterior) ");
+        String nom = System.console().readLine();
+        if(!nom.equals("")){
+            pil.setNamepiloto(nom);
+        }
+        System.out.print("Pon el nuevo apellido del piloto(si lo pones vacio deja el anterior) ");
+        String sur = System.console().readLine();
+        if(!sur.equals("")){
+            pil.setSurnamepiloto(sur);
+        }
+        int codeq = pedircodeq(es);
+        if(codeq!=0){
+            equipo eq = es.requestById(codeq);
+            pil.setEquipo(eq);
+        }
+        ps.update(pil);
+    }
+    public static void actualizarmotor(motorservice ms) throws SQLException{
+        limpiarconsola();
+        int cod = pedircodmot(ms);
+        motor mot  = ms.requestById(cod);
+        System.out.print("Pon el nuevo nombre del motor(si lo pones vacio deja el anterior) ");
+        String nom = System.console().readLine();
+        if(!nom.equals("")){
+            mot.setName_motor(nom);
+        }
+        ms.update(mot);
     }
 }
 
