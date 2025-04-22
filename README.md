@@ -176,5 +176,12 @@ muestra el ranking por equipos sumando los puntos de ambos pilotos de cada equip
 
 ![alt text](img/rankingeq.png)
 </details>
+<details>
+<summary><h2>Ranking de motores</h2></summary>
+muestra el ranking por motores sumando los puntos de los equipos que lleven ese motor:
+
+![alt text](img/rankingmot.png)
+
+</details>
 </details>
 
