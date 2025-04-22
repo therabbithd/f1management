@@ -136,12 +136,20 @@ El programa nada mas iniciar el programa mostrara el siguiente menu:
 
   ![alt text](img/lisgp.png)
   </details>
+
   </details>
   
 </details>
+<details>
+<summary><h1>Mostrar Ranking</h1></summary>
+Al darle saldrá el siguiente menu:
 
-## Sistema de puntos
-para el calculo de puntos se usara el siguiente sistema(el actual)
+```
+1.Ranking de pilotos
+2.Ranking de equipos
+3.Ranking de motores
+```
+Para los ranking se utiliza el sistema de puntos actual(sin punto por vuelta rápida):
 | posicion | puntos |
 | -------- | ------ |
 | 1        | 25     |
@@ -154,3 +162,19 @@ para el calculo de puntos se usara el siguiente sistema(el actual)
 | 8        | 4      |
 | 9        | 2      |
 | 10       | 1      |
+
+<details>
+<summary><h2>Ranking de pilotos</h2></summary>
+Te muestra el ranking de la temporada por pilotos:
+
+![alt text](img/rankingpil.png)
+
+</details>
+<details>
+<summary><h2>Ranking de equipos</h2></summary>
+muestra el ranking por equipos sumando los puntos de ambos pilotos de cada equipo:
+
+![alt text](img/rankingeq.png)
+</details>
+</details>
+
