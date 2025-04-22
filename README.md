@@ -122,7 +122,7 @@ El programa nada mas iniciar el programa mostrara el siguiente menu:
 
   te pregunta el código del piloto y te envia un mensaje de confirmación:
 
-  ![alt text](img/confirmacionpil.png)
+  ![alt text](img/confirmacionpil.png)<br>
   y te pone los resultados: 
 
   ![alt text](img/reporpil.png)
@@ -133,7 +133,7 @@ El programa nada mas iniciar el programa mostrara el siguiente menu:
   <details>
   <summary><h2>GP</h2></summary>
   al darle mostrara todo lo gps:
-  
+
   ![alt text](img/lisgp.png)
   </details>
   </details>
