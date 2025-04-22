@@ -119,10 +119,25 @@ El programa nada mas iniciar el programa mostrara el siguiente menu:
   </details>
   <details>
   <summary><h3>Listar resultados de un piloto</h3></summary>
+
+  te pregunta el código del piloto y te envia un mensaje de confirmación:
+
+  ![alt text](img/confirmacionpil.png)
+  y te pone los resultados: 
+
+  ![alt text](img/reporpil.png)
+
+  </details>
   
   </details>
+  <details>
+  <summary><h2>GP</h2></summary>
+  al darle mostrara todo lo gps:
+  
+  ![alt text](img/lisgp.png)
   </details>
   </details>
+  
 </details>
 
 ## Sistema de puntos
