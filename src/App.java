@@ -585,7 +585,6 @@ public class App {
         int codgp = perircodgp(gps);
         if(codgp != 0){
             GP gp = gps.requestById(codgp);
-            System.out.print("pon el codigo del piloto: ");
             int codpil = pedircodpil(ps);
             if(codpil != 0){
                 piloto pil = ps.requestById(codpil);

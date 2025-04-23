@@ -229,6 +229,10 @@ luego pedira el codigo de equipo del cual pondra un mensaje de confirmacion con 
 </details>
 <details>
 <summary><h2>Resultado</h2></summary>
+Al darle te pide el código de gp al ponerlo lanza un mensaje de confirmación:
+
+![alt text](img/confirmarcodgp.png)
+
 
 </details>
 </details>
