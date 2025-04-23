@@ -202,8 +202,33 @@ Al darle te preguntara el nombre del equipo que deseas poner
 despues te pregunta por el codigo del motor al ponerlo te pondra una confirmacion con el nombre del motor:
 ![alt text](img/confirmacionmot.png)
 
+
 </details>
 <details>
+<summary><h2>Motor</h2></summary>
+Al darle pregunta por el nombre del motor
+
+![alt text](img/pedirnommot.png)<br>
+al poner el nombre ya se guardaría ya que no tiene nada mas los motores
+</details>
+<details>
+<summary><h2>Pilotos</h2></summary>
+Al darle primero pide el nombre del piloto:
+
+![alt text](img/pedirnompil.png)<br>
+Después pregunta por el apellido del piloto
+
+![alt text](img/pedirsurpil.png)<br>
+Luego pedirá la fecha de nacimiento con formato dd/MM/yyyy
+
+![alt text](img/pedirfecnac.png)<br>
+luego pedira el codigo de equipo del cual pondra un mensaje de confirmacion con el nombre del equipo:
+
+![alt text](img/confirmeq.png)
+
+</details>
+<details>
+<summary><h2>Resultado</h2></summary>
 
 </details>
 </details>
