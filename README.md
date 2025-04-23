@@ -184,4 +184,27 @@ muestra el ranking por motores sumando los puntos de los equipos que lleven ese 
 
 </details>
 </details>
+<details>
+<summary><h1>Insertar datos</h1></summary>
+Al darle sale el siguiente menu se abre el siguiente submenu 
+
+```
+1.Equipos
+2.Motor
+3.pilotos
+4.resultados
+```
+<details>
+<summary><h2>Equipos</h2></summary>
+Al darle te preguntara el nombre del equipo que deseas poner
+
+![alt text](img/preguntapornom.png)<br>
+despues te pregunta por el codigo del motor al ponerlo te pondra una confirmacion con el nombre del motor:
+![alt text](img/confirmacionmot.png)
+
+</details>
+<details>
+
+</details>
+</details>
 

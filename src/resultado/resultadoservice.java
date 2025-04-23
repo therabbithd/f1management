@@ -68,7 +68,7 @@ public class resultadoservice implements CRUDSERVICE<resultado>{
     public void create(resultado model) throws SQLException {
         Statement stmt = conn.createStatement();
         String consulta = String.format("INSERT INTO resultado(CodGP,CodPil,pos) VALUES (%d,%d,%d)",model.getGP().getCod_gp(),model.getPiloto().getCod_piloto(),model.getPos());
-        stmt.executeQuery(consulta);
+        stmt.executeUpdate(consulta);
         stmt.close();
 
     }
@@ -87,7 +87,7 @@ public class resultadoservice implements CRUDSERVICE<resultado>{
     public boolean delete(long id) throws SQLException {
         resultado res = requestById(id);
         Statement stmt = conn.createStatement();
-        stmt.executeQuery("DELETE FROM resultado WHERE CodGP = "+res.getGP().getCod_gp()+" && CodPil = "+res.getPiloto().getCod_piloto());
+        stmt.executeUpdate("DELETE FROM resultado WHERE CodGP = "+res.getGP().getCod_gp()+" && CodPil = "+res.getPiloto().getCod_piloto());
         stmt.close();
         return true;
     }

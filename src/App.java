@@ -130,6 +130,7 @@ public class App {
                         default:
                             throw new AssertionError();
                     }
+                    break;
                 case 4:
                     limpiarconsola();
                     System.out.println("1.Eliminar piloto\n2.Eliminar equipo\n3.Eliminar motor\n4.Eliminar GP\n5.Eliminar resultado");
@@ -158,6 +159,7 @@ public class App {
                         default:
                             throw new AssertionError();
                     }
+                    break;
                 case 5:
                 System.out.println("1.piloto\n2.equipo\n3.motor");
                 int op5 = Integer.parseInt(System.console().readLine());
@@ -563,7 +565,7 @@ public class App {
                    ms.delete(id);
                 }
             }
-        } catch (Exception e) {
+        } catch (nosepuedeeliminar e) {
             System.out.println("hay "+ numenc+" equipos asignados a ese motor borralos o actualizalos antes de eliminar el motor ");
         }
     }
